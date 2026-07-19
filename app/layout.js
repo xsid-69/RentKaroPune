@@ -16,15 +16,13 @@ export const viewport = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className="scroll-smooth">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
-        <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('has-js');" }} />
-        <noscript><style>{`.reveal{opacity:1!important;transform:none!important;filter:none!important;}`}</style></noscript>
       </head>
-      <body>
+      <body className="m-0 overflow-x-hidden bg-[#f7f7f4] font-[Outfit,_Segoe_UI,_sans-serif] text-base leading-6 text-[#11110f] selection:bg-[#ff5a1f] selection:text-white">
         <MarketplaceProvider>
           <AppShell>{children}</AppShell>
         </MarketplaceProvider>

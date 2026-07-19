@@ -7,6 +7,14 @@ import Icon from "./Icon";
 import PaymentModal from "./PaymentModal";
 import { useMarketplace } from "@/lib/marketplace-context";
 
+const buttonBaseClasses = "inline-flex min-h-12 items-center justify-center gap-[9px] rounded-xl border px-5 font-bold text-white transition-[transform,box-shadow,background] duration-200 ease-[var(--ease)] hover:-translate-y-0.5 hover:shadow-[var(--shadow-sm)] disabled:cursor-not-allowed disabled:opacity-50";
+const primaryButtonClasses = `${buttonBaseClasses} border-[var(--orange)] bg-[var(--orange)] hover:bg-[var(--orange-dark)]`;
+const secondaryButtonClasses = `${buttonBaseClasses} border-[var(--line)] bg-white text-[var(--ink)]`;
+const labelClasses = "grid gap-[7px]";
+const inputClasses = "min-h-12 w-full rounded-[10px] border border-[var(--line)] bg-white px-[13px] py-[11px] text-[var(--ink)] outline-none transition-[border-color,box-shadow] duration-[180ms] ease-[var(--ease)] focus:border-[var(--orange)] focus:shadow-[0_0_0_3px_var(--orange-soft)]";
+const statusBaseClasses = "inline-flex min-h-7 w-fit items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold before:h-[7px] before:w-[7px] before:rounded-full before:bg-current";
+const statusUtilityMap = { Available: "bg-[var(--green-soft)] text-[oklch(0.4_0.13_155)]", "Under Hold": "bg-[var(--orange-soft)] text-[oklch(0.49_0.17_48)]", Rented: "bg-[var(--soft)] text-[var(--ink-2)]", "Pending verification": "bg-[var(--orange-soft)] text-[oklch(0.49_0.17_48)]", default: "bg-[var(--soft)] text-[var(--ink-2)]" };
+
 export default function PropertyDetails() {
   const { id } = useParams();
   const { state, broker, unlockProperty, bookVisit } = useMarketplace();
@@ -16,54 +24,25 @@ export default function PropertyDetails() {
   const unlocked = state.unlocks.some((item) => item.propertyId === id);
   const lead = state.leads.find((item) => item.propertyId === id);
 
-  if (!property) return <section className="not-found"><span>404</span><h1>This property has moved.</h1><p>It may have been rented or removed from verification.</p><Link className="button primary" href="/">Browse available homes</Link></section>;
+  if (!property) return <section className="grid min-h-[70dvh] place-content-center justify-items-center px-6 py-12 text-center"><span className="text-7xl font-extrabold text-[var(--orange)]">404</span><h1 className="text-[44px]">This property has moved.</h1><p className="text-[var(--muted)]">It may have been rented or removed from verification.</p><Link className={primaryButtonClasses} href="/">Browse available homes</Link></section>;
 
   const token = Math.round(property.rent * 0.15);
   const formattedVisit = visitDate ? new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeStyle: "short" }).format(new Date(visitDate)) : "";
   const canUnlock = property.approved && property.status === "Available";
-  const statusClass = property.status.toLowerCase().replaceAll(" ", "-");
+  const propertyStatusClasses = statusUtilityMap[property.status] ?? statusUtilityMap.default;
 
   return <>
-    <section className="detail-wrap">
-      <div className="breadcrumb"><Link href="/">Discover</Link><span>/</span><span>{property.locality}</span><span>/</span><strong>{property.id.toUpperCase()}</strong></div>
-      <div className="detail-title">
-        <div><span className={`status ${statusClass}`}>{property.status}</span><h1>{property.title}</h1><p><Icon name="map" size={17}/>{property.locality}, Pune · Owner verified</p></div>
-        <div className="detail-price"><strong className="money">₹{property.rent.toLocaleString("en-IN")}</strong><span>monthly rent</span></div>
+    <section className="mx-auto max-w-[var(--container)] px-6 pb-24 pt-10 max-[720px]:px-4 max-[390px]:pb-16">
+      <div className="mb-[30px] flex flex-wrap gap-2 text-sm text-[var(--muted)]"><Link className="hover:text-[var(--orange-dark)]" href="/">Discover</Link><span>/</span><span>{property.locality}</span><span>/</span><strong>{property.id.toUpperCase()}</strong></div>
+      <div className="mb-8 flex items-end justify-between gap-8 max-[720px]:flex-col max-[720px]:items-start" data-motion-reveal><div><span className={`${statusBaseClasses} ${propertyStatusClasses}`}>{property.status}</span><h1 className="mt-3 max-w-[820px] text-[clamp(40px,5vw,68px)] max-[720px]:text-[40px]">{property.title}</h1><p className="mb-0 mt-3.5 flex items-center gap-[7px] text-[var(--muted)]"><Icon name="map" size={17}/>{property.locality}, Pune · Owner verified</p></div><div className="min-w-[190px] text-right max-[720px]:text-left"><strong className="block text-[32px] tabular-nums tracking-[-0.025em]">₹{property.rent.toLocaleString("en-IN")}</strong><span className="text-[var(--muted)]">monthly rent</span></div></div>
+      <div className="grid grid-cols-[2fr_1fr] grid-rows-[repeat(2,210px)] gap-3 overflow-hidden rounded-[var(--radius-lg)] bg-[var(--soft)] max-[720px]:grid-cols-2 max-[720px]:grid-rows-[280px_130px] max-[390px]:grid-rows-[240px_110px]" data-motion-reveal><div className="group relative row-[1/-1] overflow-hidden max-[720px]:col-[1/-1] max-[720px]:row-auto"><img className="h-full w-full object-cover transition-transform duration-[450ms] ease-[var(--ease)] group-hover:scale-[1.025]" src={property.images[0]} alt={`${property.title} main living space`}/></div>{(property.images.slice(1).length ? property.images.slice(1) : [property.images[0], property.images[0]]).map((image, index) => <div className="group relative overflow-hidden" key={`${image}-${index}`}><img className="h-full w-full object-cover transition-transform duration-[450ms] ease-[var(--ease)] group-hover:scale-[1.025]" src={image} alt={`${property.title} view ${index + 2}`}/>{index === 1 && <span className="absolute bottom-3.5 right-3.5 rounded-lg bg-[rgb(255_255_255/92%)] px-[11px] py-2 text-xs font-bold">Free to browse · no login</span>}</div>)}</div>
+      <div className="mt-[52px] grid grid-cols-[minmax(0,1fr)_390px] items-start gap-14 max-[980px]:grid-cols-1"><div className="min-w-0">
+        <div className="grid grid-cols-4 border-y border-[var(--line)] py-6 max-[720px]:grid-cols-2 max-[720px]:gap-y-5" data-motion-reveal>{[[property.bhk, "Configuration"], [`${property.area.toLocaleString("en-IN")} sq ft`, "Carpet area"], [property.furnishing, "Furnishing"], [`₹${property.deposit.toLocaleString("en-IN")}`, "Deposit"]].map(([value, label], index) => <div className={index === 0 ? "border-r border-[var(--line)] pr-[18px]" : index === 1 ? "border-r border-[var(--line)] px-[18px] max-[720px]:border-r-0" : index === 2 ? "border-r border-[var(--line)] px-[18px] max-[720px]:pl-0" : "px-[18px]"} key={label}><strong className="block">{value}</strong><span className="mt-[5px] block text-[13px] text-[var(--muted)]">{label}</span></div>)}</div>
+        <section className="border-b border-[var(--line)] py-10" data-motion-reveal><h2 className="text-[30px]">Designed for an easier move.</h2><p className="max-w-[70ch] text-[var(--muted)]">{property.description}</p><p className="max-w-[70ch] text-[var(--muted)]">Available: <strong>{property.available}</strong>. The exact address is shared after contact unlock to protect owner privacy.</p></section>
+        <section className="border-b border-[var(--line)] py-10" data-motion-reveal><h2 className="text-[30px]">Amenities</h2><div className="mt-6 flex flex-wrap gap-2.5">{property.amenities.map((amenity) => <span className="flex min-h-[42px] items-center gap-2 rounded-[10px] bg-[var(--soft)] px-[13px] font-semibold [&>svg]:text-[var(--green)]" key={amenity}><Icon name="check" size={17}/>{amenity}</span>)}</div></section>
+        <section className="mt-7 flex gap-[13px] rounded-[var(--radius-sm)] bg-[var(--orange-soft)] p-[18px] [&>svg]:text-[var(--orange-dark)]" data-motion-reveal><Icon name="info"/><div><strong>Transparent hold policy</strong><p className="mb-0 mt-1 text-[var(--ink-2)]">The optional token is 15% of monthly rent (₹{token.toLocaleString("en-IN")}). If you cancel before closure, 75% is refundable. Full terms are shown before payment.</p></div></section>
       </div>
-      <div className="gallery">
-        <div className="gallery-main"><img src={property.images[0]} alt={`${property.title} main living space`}/></div>
-        {(property.images.slice(1).length ? property.images.slice(1) : [property.images[0], property.images[0]]).map((image, index) => <div className="gallery-side" key={`${image}-${index}`}><img src={image} alt={`${property.title} view ${index + 2}`}/>{index === 1 && <span>Free to browse · no login</span>}</div>)}
-      </div>
-
-      <div className="detail-layout">
-        <div className="detail-content">
-          <div className="spec-row"><div><strong>{property.bhk}</strong><span>Configuration</span></div><div><strong>{property.area.toLocaleString("en-IN")} sq ft</strong><span>Carpet area</span></div><div><strong>{property.furnishing}</strong><span>Furnishing</span></div><div><strong>₹{property.deposit.toLocaleString("en-IN")}</strong><span>Deposit</span></div></div>
-          <section className="detail-section"><h2>Designed for an easier move.</h2><p>{property.description}</p><p>Available: <strong>{property.available}</strong>. The exact address is shared after contact unlock to protect owner privacy.</p></section>
-          <section className="detail-section"><h2>Amenities</h2><div className="amenity-list">{property.amenities.map((amenity) => <span key={amenity}><Icon name="check" size={17}/>{amenity}</span>)}</div></section>
-          <section className="policy-note"><Icon name="info"/><div><strong>Transparent hold policy</strong><p>The optional token is 15% of monthly rent (₹{token.toLocaleString("en-IN")}). If you cancel before closure, 75% is refundable. Full terms are shown before payment.</p></div></section>
-        </div>
-
-        <aside className="unlock-panel" aria-label="Contact and visit actions">
-          {!unlocked ? <>
-            <span className="unlock-kicker"><Icon name="lock" size={17}/> Private contact protection</span>
-            <h2>Meet this home in person.</h2>
-            <p>Unlock the verified broker’s number and book your first visit for one clear fee.</p>
-            <div className="unlock-price"><strong className="money">₹99</strong><span>one-time · first visit included</span></div>
-            <ul className="included-list"><li><Icon name="check" size={17}/> Verified broker contact</li><li><Icon name="check" size={17}/> First site visit included</li><li><Icon name="check" size={17}/> No brokerage until closure</li></ul>
-            {canUnlock ? <button className="button primary full" onClick={() => setPaymentOpen(true)}>Unlock contact & visit <Icon name="arrow"/></button> : <div className="availability-message"><Icon name="info"/><span>This listing is not accepting new unlocks while its status is <strong>{property.status}</strong>.</span></div>}
-            <small className="action-footnote">Additional visits to the same property cost ₹50 each.</small>
-          </> : <>
-            <span className="status success">Contact unlocked</span>
-            <h2>{broker.name}</h2>
-            <p className="broker-zone">Verified partner · {broker.zone} · {broker.rating}/5 rating</p>
-            <a className="broker-phone" href={`tel:${broker.phone.replaceAll(" ", "")}`}><Icon name="phone"/><span><small>Broker contact</small><strong>{broker.phone}</strong></span></a>
-            {lead?.status === "Unlocked" ? <div className="visit-booking">
-              <label className="field" htmlFor="visit-date"><span>Choose visit date and time</span><input id="visit-date" type="datetime-local" min="2026-07-20T09:00" value={visitDate} onChange={(event) => setVisitDate(event.target.value)}/></label>
-              <button className="button primary full" disabled={!visitDate} onClick={() => bookVisit(id, formattedVisit)}>Confirm included visit <Icon name="calendar"/></button>
-            </div> : <div className="visit-confirmation"><Icon name="calendar"/><div><strong>{lead?.status || "Assigned"}</strong><span>{lead?.visitDate && lead.visitDate !== "Not booked" ? lead.visitDate : "Manage the next step in your dashboard."}</span></div></div>}
-            <Link className="button secondary full" href="/dashboard?role=client">Open client workspace <Icon name="arrow"/></Link>
-          </>}
-        </aside>
+      <aside className="sticky top-[104px] rounded-[var(--radius)] bg-[var(--ink)] p-7 text-white shadow-[var(--shadow-lg)] max-[980px]:static" aria-label="Contact and visit actions" data-motion-reveal>{!unlocked ? <><span className="flex items-center gap-[7px] text-[13px] font-bold text-[oklch(0.84_0.1_55)]"><Icon name="lock" size={17}/> Private contact protection</span><h2 className="mb-2.5 mt-3.5 text-[30px]">Meet this home in person.</h2><p className="text-[oklch(0.78_0.006_55)]">Unlock the verified broker’s number and book your first visit for one clear fee.</p><div className="my-5 flex items-end gap-2.5 border-y border-[rgb(255_255_255/14%)] py-5"><strong className="text-[44px] leading-none tabular-nums tracking-[-0.025em] text-[var(--orange)]">₹99</strong><span className="text-[13px] text-[oklch(0.75_0_0)]">one-time · first visit included</span></div><ul className="mb-6 grid list-none gap-[11px] p-0 [&_li]:flex [&_li]:items-center [&_li]:gap-[9px] [&_svg]:text-[var(--orange)]"><li><Icon name="check" size={17}/> Verified broker contact</li><li><Icon name="check" size={17}/> First site visit included</li><li><Icon name="check" size={17}/> No brokerage until closure</li></ul>{canUnlock ? <button className={`${primaryButtonClasses} w-full`} onClick={() => setPaymentOpen(true)}>Unlock contact & visit <Icon name="arrow"/></button> : <div className="mt-7 flex gap-[13px] rounded-[var(--radius-sm)] bg-[var(--orange-soft)] p-[18px] [&>svg]:text-[var(--orange-dark)]"><Icon name="info"/><span>This listing is not accepting new unlocks while its status is <strong>{property.status}</strong>.</span></div>}<small className="mt-3.5 block text-center text-[oklch(0.72_0_0)]">Additional visits to the same property cost ₹50 each.</small></> : <><span className={`${statusBaseClasses} bg-[var(--green-soft)] text-[oklch(0.4_0.13_155)]`}>Contact unlocked</span><h2 className="mb-2.5 mt-3.5 text-[30px]">{broker.name}</h2><p className="mb-5 text-[oklch(0.78_0.006_55)]">Verified partner · {broker.zone} · {broker.rating}/5 rating</p><a className="my-5 flex min-h-[66px] items-center gap-3 rounded-xl bg-white p-3 text-[var(--ink)] [&>svg]:text-[var(--orange-dark)]" href={`tel:${broker.phone.replaceAll(" ", "")}`}><Icon name="phone"/><span className="block"><small className="block text-[var(--muted)]">Broker contact</small><strong className="block">{broker.phone}</strong></span></a>{lead?.status === "Unlocked" ? <div className="grid gap-3 py-[18px]"><label className={labelClasses} htmlFor="visit-date"><span className="text-[13px] font-bold text-[oklch(0.82_0_0)]">Choose visit date and time</span><input className={inputClasses} id="visit-date" type="datetime-local" min="2026-07-20T09:00" value={visitDate} onChange={(event) => setVisitDate(event.target.value)}/></label><button className={`${primaryButtonClasses} w-full`} disabled={!visitDate} onClick={() => bookVisit(id, formattedVisit)}>Confirm included visit <Icon name="calendar"/></button></div> : <div className="my-5 flex gap-3 rounded-xl bg-[rgb(255_255_255/9%)] p-4"><Icon name="calendar"/><div><strong>{lead?.status || "Assigned"}</strong><span className="mt-[3px] block text-[13px] text-[oklch(0.74_0_0)]">{lead?.visitDate && lead.visitDate !== "Not booked" ? lead.visitDate : "Manage the next step in your dashboard."}</span></div></div>}<Link className={`${secondaryButtonClasses} mt-2.5 w-full`} href="/dashboard?role=client">Open client workspace <Icon name="arrow"/></Link></>}</aside>
       </div>
     </section>
     <PaymentModal open={paymentOpen} onClose={() => setPaymentOpen(false)} amount={99} title="Unlock verified contact" note={`Includes ${broker.name}’s contact and your first visit to ${property.title}.`} onSuccess={() => unlockProperty(id)}/>
