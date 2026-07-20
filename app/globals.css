@@ -1,12 +1,10 @@
 @import "tailwindcss";
 
 @theme {
-  --animate-marquee: marquee 28s linear infinite;
   --animate-backdrop: backdrop-in 180ms cubic-bezier(.22,1,.36,1);
   --animate-modal: modal-in 240ms cubic-bezier(.22,1,.36,1);
   --animate-shimmer: shimmer 1.2s linear infinite;
 
-  @keyframes marquee { to { transform: translateX(-50%); } }
   @keyframes backdrop-in { from { opacity: 0; } }
   @keyframes modal-in { from { opacity: 0; transform: translateY(16px) scale(.985); } }
   @keyframes shimmer { to { background-position: -200% 0; } }
@@ -19,7 +17,7 @@
   --green: oklch(0.52 0.14 155); --green-soft: oklch(0.96 0.035 150); --red: oklch(0.53 0.2 28);
   --shadow-sm: 0 8px 24px rgb(10 10 10 / 7%); --shadow-lg: 0 28px 80px rgb(10 10 10 / 16%);
   --radius-sm: 12px; --radius: 18px; --radius-lg: 28px; --ease: cubic-bezier(.22,1,.36,1);
-  --container: 1240px; --z-backdrop: 60; --z-modal: 70;
+  --container: 1240px; --z-sticky: 50; --z-backdrop: 60; --z-modal: 70;
 }
 
 @layer base {
