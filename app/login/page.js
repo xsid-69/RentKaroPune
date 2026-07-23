@@ -90,6 +90,8 @@ export default function LoginPage() {
     setError("");
     setGoogleBusy(true);
     const result = await signInWithGoogle();
+    // A redirect-based sign-in is navigating away; leave the button spinner on.
+    if (result?.redirecting) return;
     setGoogleBusy(false);
     if (result?.cancelled) return;
     if (result?.error) {
