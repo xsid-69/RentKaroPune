@@ -1,6 +1,7 @@
 import "lenis/dist/lenis.css";
 import "./globals.css";
 import { MarketplaceProvider } from "@/lib/marketplace-context";
+import { AuthProvider } from "@/lib/auth-context";
 import AppShell from "@/components/AppShell";
 
 export const metadata = {
@@ -20,12 +21,14 @@ export default function RootLayout({ children }) {
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
       </head>
-      <body className="m-0 overflow-x-hidden bg-white font-[Outfit,_Segoe_UI,_sans-serif] text-base leading-6 text-[#0A0A0A] selection:bg-[#FF5B00] selection:text-white">
-        <MarketplaceProvider>
-          <AppShell>{children}</AppShell>
-        </MarketplaceProvider>
+      <body className="m-0 font-[Poppins,_Segoe_UI,_sans-serif] text-base leading-6 text-[#0A0A0A] selection:bg-[#FF5B00] selection:text-white">
+        <AuthProvider>
+          <MarketplaceProvider>
+            <AppShell>{children}</AppShell>
+          </MarketplaceProvider>
+        </AuthProvider>
       </body>
     </html>
   );

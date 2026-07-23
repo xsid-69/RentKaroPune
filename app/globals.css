@@ -17,11 +17,34 @@
   --green: oklch(0.52 0.14 155); --green-soft: oklch(0.96 0.035 150); --red: oklch(0.53 0.2 28);
   --shadow-sm: 0 8px 24px rgb(10 10 10 / 7%); --shadow-lg: 0 28px 80px rgb(10 10 10 / 16%);
   --radius-sm: 12px; --radius: 18px; --radius-lg: 28px; --ease: cubic-bezier(.22,1,.36,1);
-  --container: 1240px; --z-sticky: 50; --z-backdrop: 60; --z-modal: 70;
+  --container: 1240px; --z-sticky: 40; --z-dropdown: 50; --z-shell: 60; --z-nav: 70;
+  --z-backdrop: 80; --z-modal: 90; --z-toast: 100; --z-skip: 110;
 }
 
 @layer base {
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  body {
+    min-width: 320px;
+    min-height: 100vh;
+    font-family: Poppins, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    color: var(--ink);
+    background:
+      radial-gradient(58rem 40rem at 10% -8%, oklch(0.95 0.045 55 / 0.55), transparent 60%),
+      radial-gradient(52rem 40rem at 106% 2%, oklch(0.95 0.03 250 / 0.42), transparent 55%),
+      radial-gradient(46rem 44rem at 82% 108%, oklch(0.95 0.04 150 / 0.35), transparent 60%),
+      linear-gradient(178deg, oklch(0.995 0.004 90), oklch(0.972 0.008 60));
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+  }
   :focus-visible { outline: 3px solid oklch(0.75 0.16 55); outline-offset: 3px; }
+  button, select, a { touch-action: manipulation; }
   button, select { cursor: pointer; }
   button:disabled { cursor: not-allowed; }
+  h1, h2, h3 { text-wrap: balance; }
+  p { text-wrap: pretty; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
 }
