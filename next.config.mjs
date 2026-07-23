@@ -17,6 +17,10 @@ if (process.env.NODE_ENV === "production") {
 
 const nextConfig = {
   reactStrictMode: true,
+  // Keep firebase-admin (and its ESM-only deps like jose) out of the bundler so
+  // Node resolves them natively at runtime. Bundling breaks with ERR_REQUIRE_ESM
+  // on Vercel because jose's ESM build gets require()'d.
+  serverExternalPackages: ["firebase-admin"],
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },
