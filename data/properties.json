@@ -1,0 +1,489 @@
+[
+  {
+    "title": "Puneville 4.5 BHK Fully Furnished",
+    "bhk": "4BHK+",
+    "propertyType": "Flat",
+    "location": "Punawale",
+    "address": "Puneville, Punawale, Pune",
+    "rent": 72000,
+    "deposit": 216000,
+    "furnishing": "Fully Furnished",
+    "tenantPreference": "Family",
+    "parking": "2 Covered Car Parking",
+    "images": [
+      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80"
+    ],
+    "isFallbackImage": true,
+    "contact": { "agent": "Ajit Suryawanshi", "phone": "7498773508" },
+    "status": "approved"
+  },
+  {
+    "title": "Broadway 4 BHK Luxury Flat",
+    "bhk": "4BHK+",
+    "propertyType": "Flat",
+    "location": "Wakad",
+    "address": "Broadway, Wakad, Pune",
+    "rent": 100000,
+    "deposit": 200000,
+    "furnishing": "Unfurnished",
+    "tenantPreference": "Family",
+    "parking": "Covered Parking",
+    "images": [
+      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80"
+    ],
+    "isFallbackImage": true,
+    "contact": { "agent": "Ajit Suryawanshi", "phone": "7498773508" },
+    "status": "approved"
+  },
+  {
+    "title": "YNC Society 3 BHK Flat",
+    "bhk": "3BHK",
+    "propertyType": "Flat",
+    "location": "Wakad",
+    "address": "YNC Society, Wakad, Pune",
+    "rent": 46000,
+    "deposit": 92000,
+    "furnishing": "Semi Furnished",
+    "tenantPreference": "Family",
+    "parking": "Covered Parking",
+    "images": [
+      "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80"
+    ],
+    "isFallbackImage": true,
+    "contact": { "agent": "Ajit Suryawanshi", "phone": "7498773508" },
+    "status": "approved"
+  },
+  {
+    "title": "Elight 27 Furnished Row House",
+    "bhk": "3BHK",
+    "propertyType": "Bungalow",
+    "location": "Wakad",
+    "address": "Elight 27, Wakad, Pune",
+    "rent": 55000,
+    "deposit": 100000,
+    "furnishing": "Fully Furnished",
+    "tenantPreference": "Both",
+    "parking": "Covered Car Parking",
+    "images": [
+      "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=800&q=80"
+    ],
+    "isFallbackImage": true,
+    "contact": { "agent": "Ajit Suryawanshi", "phone": "7498773508" },
+    "status": "approved"
+  },
+  {
+    "title": "Bella Vista Duplex Penthouse (3200 sq.ft)",
+    "bhk": "3BHK",
+    "propertyType": "Villa",
+    "location": "Wakad",
+    "address": "Bella Vista, Behind Datta Mandir, Wakad, Pune",
+    "rent": 60000,
+    "deposit": 180000,
+    "furnishing": "Semi Furnished",
+    "tenantPreference": "Family & Working Women",
+    "parking": "Covered Car Parking",
+    "images": [
+      "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80"
+    ],
+    "isFallbackImage": true,
+    "contact": { "agent": "Ajit Suryawanshi", "phone": "7498773508" },
+    "status": "approved"
+  },
+  {
+    "title": "ANP Memento 3BHK Flat",
+    "bhk": "3BHK",
+    "propertyType": "Flat",
+    "location": "Wakad",
+    "address": "ANP Memento, Wakad, Pune",
+    "rent": 50000,
+    "deposit": 100000,
+    "furnishing": "Semi Furnished",
+    "tenantPreference": "Family",
+    "parking": "Covered Parking",
+    "images": [
+      "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=80"
+    ],
+    "isFallbackImage": true,
+    "contact": { "agent": "Ajit Suryawanshi", "phone": "7498773508" },
+    "status": "approved"
+  },
+  {
+    "title": "Bliss Society 3 BHK Flat",
+    "bhk": "3BHK",
+    "propertyType": "Flat",
+    "location": "Wakad",
+    "address": "Bliss Society, Wakad, Pune",
+    "rent": 45000,
+    "deposit": 90000,
+    "furnishing": "Semi Furnished",
+    "tenantPreference": "Both",
+    "parking": "Covered Parking",
+    "images": [
+      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80"
+    ],
+    "isFallbackImage": true,
+    "contact": { "agent": "Ajit Suryawanshi", "phone": "7498773508" },
+    "status": "approved"
+  },
+  {
+    "title": "Aishwaryam Greens Fully Furnished 3BHK",
+    "bhk": "3BHK",
+    "propertyType": "Flat",
+    "location": "Wakad",
+    "address": "Aishwaryam Greens, Wakad, Pune",
+    "rent": 45000,
+    "deposit": 100000,
+    "furnishing": "Fully Furnished",
+    "tenantPreference": "Family",
+    "parking": "Covered Parking",
+    "images": [
+      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80"
+    ],
+    "isFallbackImage": true,
+    "contact": { "agent": "Ajit Suryawanshi", "phone": "7498773508" },
+    "status": "approved"
+  },
+  {
+    "title": "Signature Park 3BHK Flat",
+    "bhk": "3BHK",
+    "propertyType": "Flat",
+    "location": "Wakad",
+    "address": "Signature Park, Wakad, Pune",
+    "rent": 42000,
+    "deposit": 84000,
+    "furnishing": "Unfurnished",
+    "tenantPreference": "Both",
+    "parking": "Covered Parking",
+    "images": [
+      "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=80"
+    ],
+    "isFallbackImage": true,
+    "contact": { "agent": "Ajit Suryawanshi", "phone": "7498773508" },
+    "status": "approved"
+  },
+  {
+    "title": "Rose E Meher 3BHK Flat",
+    "bhk": "3BHK",
+    "propertyType": "Flat",
+    "location": "Pimple Saudagar",
+    "address": "Rose E Meher, Pimple Saudagar, Pune",
+    "rent": 36000,
+    "deposit": 80000,
+    "furnishing": "Semi Furnished",
+    "tenantPreference": "Family",
+    "parking": "Covered Parking",
+    "images": [
+      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80"
+    ],
+    "isFallbackImage": true,
+    "contact": { "agent": "Ajit Suryawanshi", "phone": "7498773508" },
+    "status": "approved"
+  },
+  {
+    "title": "Rose E Meher Fully Furnished 2.5 BHK",
+    "bhk": "2BHK",
+    "propertyType": "Flat",
+    "location": "Pimple Saudagar",
+    "address": "Rose E Meher, Pimple Saudagar, Pune",
+    "rent": 36000,
+    "deposit": 80000,
+    "furnishing": "Fully Furnished",
+    "tenantPreference": "Family",
+    "parking": "Covered Parking",
+    "images": [
+      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80"
+    ],
+    "isFallbackImage": true,
+    "contact": { "agent": "Ajit Suryawanshi", "phone": "7498773508" },
+    "status": "approved"
+  },
+  {
+    "title": "Orange Province 3 BHK Flat",
+    "bhk": "3BHK",
+    "propertyType": "Flat",
+    "location": "Vishal Nagar",
+    "address": "Orange Province, Vishal Nagar, Pune",
+    "rent": 40000,
+    "deposit": 80000,
+    "furnishing": "Semi Furnished",
+    "tenantPreference": "Both",
+    "parking": "Covered Parking",
+    "images": [
+      "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80"
+    ],
+    "isFallbackImage": true,
+    "contact": { "agent": "Ajit Suryawanshi", "phone": "7498773508" },
+    "status": "approved"
+  },
+  {
+    "title": "Sukhwani Skyline 3 BHK Flat",
+    "bhk": "3BHK",
+    "propertyType": "Flat",
+    "location": "Wakad",
+    "address": "Sukhwani Skyline, Wakad, Pune",
+    "rent": 40000,
+    "deposit": 80000,
+    "furnishing": "Unfurnished",
+    "tenantPreference": "Both",
+    "parking": "Covered Parking",
+    "images": [
+      "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=80"
+    ],
+    "isFallbackImage": true,
+    "contact": { "agent": "Ajit Suryawanshi", "phone": "7498773508" },
+    "status": "approved"
+  },
+  {
+    "title": "Yashone Infinity 3BHK Flat",
+    "bhk": "3BHK",
+    "propertyType": "Flat",
+    "location": "Punawale",
+    "address": "Yashone Infinity, Punawale, Pune",
+    "rent": 30000,
+    "deposit": 60000,
+    "furnishing": "Semi Furnished",
+    "tenantPreference": "Both",
+    "parking": "Covered Parking",
+    "images": [
+      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80"
+    ],
+    "isFallbackImage": true,
+    "contact": { "agent": "Ajit Suryawanshi", "phone": "7498773508" },
+    "status": "approved"
+  },
+  {
+    "title": "Kohinoor Sapphire 3 Semi-Furnished 3BHK",
+    "bhk": "3BHK",
+    "propertyType": "Flat",
+    "location": "Tathawade",
+    "address": "Kohinoor Sapphire 3, Tathawade, Pune",
+    "rent": 35000,
+    "deposit": 70000,
+    "furnishing": "Semi Furnished",
+    "tenantPreference": "Family",
+    "parking": "Covered Car Parking",
+    "images": [
+      "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80"
+    ],
+    "isFallbackImage": true,
+    "contact": { "agent": "Ajit Suryawanshi", "phone": "7498773508" },
+    "status": "approved"
+  },
+  {
+    "title": "Riviera Fully Furnished 3BHK",
+    "bhk": "3BHK",
+    "propertyType": "Flat",
+    "location": "Mahalunge",
+    "address": "Riviera, Mahalunge, Pune",
+    "rent": 32000,
+    "deposit": 64000,
+    "furnishing": "Fully Furnished",
+    "tenantPreference": "Family",
+    "parking": "Covered Parking",
+    "images": [
+      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80"
+    ],
+    "isFallbackImage": true,
+    "contact": { "agent": "Ajit Suryawanshi", "phone": "7498773508" },
+    "status": "approved"
+  },
+  {
+    "title": "Rama Metro Life 3BHK",
+    "bhk": "3BHK",
+    "propertyType": "Flat",
+    "location": "Tathawade",
+    "address": "Rama Metro Life, Tathawade, Pune",
+    "rent": 36000,
+    "deposit": 80000,
+    "furnishing": "Semi Furnished",
+    "tenantPreference": "Family & Working Girls",
+    "parking": "Covered Parking",
+    "images": [
+      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80"
+    ],
+    "isFallbackImage": true,
+    "contact": { "agent": "Ajit Suryawanshi", "phone": "7498773508" },
+    "status": "approved"
+  },
+  {
+    "title": "VTP Aethereus 3BHK",
+    "bhk": "3BHK",
+    "propertyType": "Flat",
+    "location": "Mahalunge",
+    "address": "VTP Aethereus, Mahalunge, Pune",
+    "rent": 35000,
+    "deposit": 105000,
+    "furnishing": "Semi Furnished",
+    "tenantPreference": "Girls",
+    "parking": "Covered Parking",
+    "images": [
+      "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=80"
+    ],
+    "isFallbackImage": true,
+    "contact": { "agent": "Ajit Suryawanshi", "phone": "7498773508" },
+    "status": "approved"
+  },
+  {
+    "title": "ANP Memento 1BHK Flat",
+    "bhk": "1BHK",
+    "propertyType": "Flat",
+    "location": "Wakad",
+    "address": "ANP Memento, Wakad, Pune",
+    "rent": 20000,
+    "deposit": 40000,
+    "furnishing": "Semi Furnished",
+    "tenantPreference": "Both",
+    "parking": "Covered Parking",
+    "images": [
+      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80"
+    ],
+    "isFallbackImage": true,
+    "contact": { "agent": "Ajit Suryawanshi", "phone": "7498773508" },
+    "status": "approved"
+  },
+  {
+    "title": "Trident Towers 1 BHK Flat",
+    "bhk": "1BHK",
+    "propertyType": "Flat",
+    "location": "Wakad",
+    "address": "Trident Towers, Wakad, Pune",
+    "rent": 25000,
+    "deposit": 75000,
+    "furnishing": "Semi Furnished",
+    "tenantPreference": "Family",
+    "parking": "1 Covered Car Parking",
+    "images": [
+      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80"
+    ],
+    "isFallbackImage": true,
+    "contact": { "agent": "Ajit Suryawanshi", "phone": "7498773508" },
+    "status": "approved"
+  },
+  {
+    "title": "Joyville 1BHK Flat",
+    "bhk": "1BHK",
+    "propertyType": "Flat",
+    "location": "Hinjewadi",
+    "address": "Joyville, Hinjewadi, Pune",
+    "rent": 24000,
+    "deposit": 72000,
+    "furnishing": "Semi Furnished",
+    "tenantPreference": "Family",
+    "parking": "Covered Parking",
+    "images": [
+      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80"
+    ],
+    "isFallbackImage": true,
+    "contact": { "agent": "Ajit Suryawanshi", "phone": "7498773508" },
+    "status": "approved"
+  },
+  {
+    "title": "Western Avenue 2BHK Flat",
+    "bhk": "2BHK",
+    "propertyType": "Flat",
+    "location": "Wakad",
+    "address": "Western Avenue, Wakad, Pune",
+    "rent": 37000,
+    "deposit": 111000,
+    "furnishing": "Semi Furnished",
+    "tenantPreference": "Family",
+    "parking": "Covered Parking",
+    "images": [
+      "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80"
+    ],
+    "isFallbackImage": true,
+    "contact": { "agent": "Ajit Suryawanshi", "phone": "7498773508" },
+    "status": "approved"
+  },
+  {
+    "title": "Mahindra Happiness 2BHK Flat",
+    "bhk": "2BHK",
+    "propertyType": "Flat",
+    "location": "Tathawade",
+    "address": "Mahindra Happiness, Tathawade, Pune",
+    "rent": 25000,
+    "deposit": 50000,
+    "furnishing": "Unfurnished",
+    "tenantPreference": "Family",
+    "parking": "Covered Parking",
+    "images": [
+      "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=80"
+    ],
+    "isFallbackImage": true,
+    "contact": { "agent": "Ajit Suryawanshi", "phone": "7498773508" },
+    "status": "approved"
+  },
+  {
+    "title": "Rachana Eternia 2BHK Fully Furnished",
+    "bhk": "2BHK",
+    "propertyType": "Flat",
+    "location": "Balewadi",
+    "address": "Rachana Eternia, Balewadi, Pune",
+    "rent": 38000,
+    "deposit": 76000,
+    "furnishing": "Fully Furnished",
+    "tenantPreference": "Family",
+    "parking": "Covered Parking",
+    "images": [
+      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80"
+    ],
+    "isFallbackImage": true,
+    "contact": { "agent": "Home Finder Reality", "phone": "8329574339" },
+    "status": "approved"
+  },
+  {
+    "title": "Majestic Signature Tower 2BHK",
+    "bhk": "2BHK",
+    "propertyType": "Flat",
+    "location": "Balewadi",
+    "address": "Majestic Signature Tower, Balewadi, Pune",
+    "rent": 55000,
+    "deposit": 110000,
+    "furnishing": "Fully Furnished",
+    "tenantPreference": "Family",
+    "parking": "Covered Parking",
+    "images": [
+      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80"
+    ],
+    "isFallbackImage": true,
+    "contact": { "agent": "Home Finder Reality", "phone": "8329574339" },
+    "status": "approved"
+  },
+  {
+    "title": "Mountvert Finesse 3BHK",
+    "bhk": "3BHK",
+    "propertyType": "Flat",
+    "location": "Baner",
+    "address": "Mountvert Finesse, Baner, Pune",
+    "rent": 51000,
+    "deposit": 102000,
+    "furnishing": "Fully Furnished",
+    "tenantPreference": "Family",
+    "parking": "Covered Parking",
+    "images": [
+      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80"
+    ],
+    "isFallbackImage": true,
+    "contact": { "agent": "Home Finder Reality", "phone": "8329574339" },
+    "status": "approved"
+  },
+  {
+    "title": "Sai Simran Fully Furnished 3BHK",
+    "bhk": "3BHK",
+    "propertyType": "Flat",
+    "location": "Aundh",
+    "address": "Sai Simran, Aundh, Pune",
+    "rent": 60000,
+    "deposit": 120000,
+    "furnishing": "Fully Furnished",
+    "tenantPreference": "Family & Working Girls",
+    "parking": "Covered Parking",
+    "images": [
+      "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80"
+    ],
+    "isFallbackImage": true,
+    "contact": { "agent": "Home Finder Reality", "phone": "8329574339" },
+    "status": "approved"
+  }
+]

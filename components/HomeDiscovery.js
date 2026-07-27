@@ -22,7 +22,7 @@ function PropertyCard({ property, priority = false }) {
     <div className="p-4 sm:p-5">
       <div className="flex items-start justify-between gap-3"><p className="m-0 text-[1.45rem] font-black leading-none tracking-[-0.04em] text-[#282622] tabular-nums">₹{money(property.rent)}<span className="ml-1 text-xs font-medium tracking-normal text-[#747068]">/mo</span></p><span className="rounded-md bg-[#fff0e8] px-2 py-1 text-xs font-extrabold text-[#d9470e]">{property.bhk}</span></div>
       <h2 className="mb-0 mt-3 line-clamp-2 min-h-12 text-base font-bold leading-6 tracking-[-0.015em] text-[#282622]">{property.title}</h2>
-      <p className="mb-0 mt-1.5 flex min-h-10 flex-wrap content-start items-center gap-x-2 text-sm leading-5 text-[#6e6961]"><span>{property.locality}</span><span aria-hidden="true">·</span><span>{money(property.area)} sq ft</span></p>
+      <p className="mb-0 mt-1.5 flex min-h-10 flex-wrap content-start items-center gap-x-2 text-sm leading-5 text-[#6e6961]"><span>{property.locality}</span>{property.area > 0 && <><span aria-hidden="true">·</span><span>{money(property.area)} sq ft</span></>}</p>
       <Link href={href} className="mt-4 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#282622] px-4 text-sm font-extrabold text-white transition-[background-color,transform] duration-200 hover:bg-[#ff5a1f] active:scale-[0.98] active:bg-[#d9470e] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ff5a1f] motion-reduce:transform-none">View home <Icon name="arrow" size={17} /></Link>
       <p className="mb-0 mt-2.5 text-center text-xs font-medium text-[#747068]">Unlock verified contact for ₹100</p>
     </div>
@@ -35,14 +35,25 @@ export default function HomeDiscovery() {
   const inventory = useMemo(() => (Array.isArray(state?.properties) ? state.properties : []).filter((property) => property?.approved === true && property.status === "Available"), [state?.properties]);
   const localities = useMemo(() => Array.from(new Set([
     ...PUNE_LOCATIONS,
-    ...inventory.map((property) => String(property.locality ?? "").trim()).filter(Boolean).map((item) => item.includes(",") ? item : `${item}, Pune`)
+    ...inventory.flatMap((property) => {
+      const address = String(property.address ?? "").trim();
+      const propertyLocality = String(property.locality ?? "").trim();
+      const localityLabel = propertyLocality && (propertyLocality.includes(",") ? propertyLocality : `${propertyLocality}, Pune`);
+      return [address, localityLabel].filter(Boolean);
+    })
   ])).sort((a, b) => a.localeCompare(b)), [inventory]);
   const filtered = useMemo(() => {
-    const queryParts = locality.trim().toLocaleLowerCase("en-IN").split(",").map((part) => part.trim()).filter(Boolean);
+    const normalizedQuery = locality.trim().toLocaleLowerCase("en-IN");
+    const queryParts = normalizedQuery.split(",").map((part) => part.trim()).filter(Boolean);
     return inventory.filter((property) => {
-      const propertyLocality = String(property.locality ?? "").toLocaleLowerCase("en-IN");
-      const matchesLocality = !queryParts.length || (Boolean(propertyLocality) && queryParts.some((part) => propertyLocality.includes(part) || part.includes(propertyLocality)));
-      return matchesLocality && (budget === "any" || Number(property.rent) <= Number(budget)) && (bhk === "All" || property.bhk === bhk);
+      const searchableLocation = [property.title, property.address, property.locality, property.location]
+        .map((value) => String(value ?? "").toLocaleLowerCase("en-IN"))
+        .filter(Boolean)
+        .join(" ");
+      const matchesLocation = !normalizedQuery
+        || searchableLocation.includes(normalizedQuery)
+        || queryParts.every((part) => searchableLocation.includes(part));
+      return matchesLocation && (budget === "any" || Number(property.rent) <= Number(budget)) && (bhk === "All" || property.bhk === bhk);
     });
   }, [inventory, locality, budget, bhk]);
   const hasFilters = Boolean(locality.trim()) || budget !== "any" || bhk !== "All";

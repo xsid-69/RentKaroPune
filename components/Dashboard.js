@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import Icon from "./Icon";
 import PaymentModal from "./PaymentModal";
 import PropertyListingForm from "./PropertyListingForm";
+import FirestoreApprovalQueue from "./FirestoreApprovalQueue";
 import { useMarketplace } from "@/lib/marketplace-context";
 import { useAuth } from "@/lib/auth-context";
 
@@ -351,6 +352,7 @@ function AdminView({ state, approveProperty }) {
     </section>
 
     <ConsultantApplications/>
+    <FirestoreApprovalQueue/>
 
     <section data-motion-reveal className={SECTION_STYLES} aria-labelledby="approval-title"><div className={SECTION_HEAD_STYLES}><div><h2 className="text-[28px]" id="approval-title">Pending ownership approvals</h2><p className="mt-[7px] mb-0 max-w-[680px] text-[var(--muted)]">Publish only after all ownership and identity evidence is checked.</p></div><span className="inline-flex min-h-8 items-center whitespace-nowrap rounded-full bg-[var(--soft)] px-2.5 text-xs font-bold text-[var(--ink-2)]">{pending.length} pending</span></div>
       {pending.length ? <div className="grid gap-3.5">{pending.map((property) => <article className="rounded-[14px] bg-[var(--soft)] p-5" key={property.id}><div className="flex items-start justify-between gap-5 max-[640px]:flex-col"><div><StatusChip status={property.status}/><h3 className="mt-2.5 mb-1 text-[21px]">{property.title}</h3><p className="m-0 text-[var(--muted)]">{property.ownerName || property.owner} · {property.locality} · {property.bhk}</p></div><strong className={`${MONEY_STYLES} whitespace-nowrap text-xl`}>{money(property.rent)}<small className="text-[var(--muted)]">/month</small></strong></div><fieldset className="my-[18px] grid grid-cols-2 gap-2 border-0 p-0 max-[640px]:grid-cols-1"><legend className="mb-[9px] font-bold">Ownership-document checklist</legend>{["Registered ownership proof received", "Owner identity matches the legal record", "Rent, area and address reviewed", "₹100 listing payment confirmed"].map((label) => <label className="flex items-start gap-[11px] rounded-[10px] bg-white p-[13px] text-[13px]" key={label}><input className="mt-[3px] h-[18px] w-[18px] shrink-0 accent-[var(--orange)]" type="checkbox" checked readOnly/><span>{label}</span></label>)}</fieldset><button className={BUTTON_PRIMARY} type="button" onClick={() => approveProperty(property.id)}><Icon name="shield" size={17}/> Approve and publish</button></article>)}</div> : <EmptyState icon="check" title="Approval queue is clear" copy="New owner submissions will appear here for document verification."/>}

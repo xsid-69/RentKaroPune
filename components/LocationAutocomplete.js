@@ -62,7 +62,11 @@ export default function LocationAutocomplete({ value, onValueChange, options, la
         const response = await fetch(`/api/places?${params}`, { signal: controller.signal });
         if (!response.ok) throw new Error("Places request failed");
         const data = await response.json();
-        setSuggestions(data.suggestions?.length ? data.suggestions.slice(0, MAX_SUGGESTIONS) : localMatches);
+        const remoteSuggestions = Array.isArray(data.suggestions) ? data.suggestions : [];
+        const mergedSuggestions = [...localMatches, ...remoteSuggestions]
+          .filter((suggestion, index, items) => items.findIndex((item) => normalize(item.label) === normalize(suggestion.label)) === index)
+          .slice(0, MAX_SUGGESTIONS);
+        setSuggestions(mergedSuggestions);
       } catch (error) {
         if (error.name !== "AbortError") setSuggestions(localMatches);
       } finally {
