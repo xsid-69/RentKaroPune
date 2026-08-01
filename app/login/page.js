@@ -105,13 +105,13 @@ export default function LoginPage() {
     "w-full rounded-xl border border-[#E5E5E5] bg-white px-4 py-3 text-[15px] text-[#0A0A0A] placeholder:text-[#9A9A9A] transition-colors focus:border-[#FF5B00] focus:outline-none focus:ring-2 focus:ring-[#FF5B00]/20";
 
   return (
-    <main className="relative isolate min-h-[calc(100vh-3.5rem)] overflow-hidden bg-[#F7F6F4]">
+    <main className="relative isolate min-h-[calc(100vh-4.5rem)] overflow-hidden bg-[#F7F6F4]">
       <div
         className="pointer-events-none absolute inset-0 -z-10 opacity-70"
         style={{ backgroundImage: "radial-gradient(60rem 40rem at 15% -10%, rgba(255,91,0,0.10), transparent 60%), radial-gradient(50rem 40rem at 110% 20%, rgba(10,10,10,0.06), transparent 55%)" }}
         aria-hidden="true"
       />
-      <div className="mx-auto grid min-h-[calc(100vh-3.5rem)] w-full max-w-[1240px] items-stretch gap-0 px-4 py-8 lg:grid-cols-2 lg:gap-10 lg:py-12">
+      <div className="site-container grid min-h-[calc(100vh-4.5rem)] items-stretch gap-0 py-8 lg:grid-cols-2 lg:gap-10 lg:py-12">
         {/* Brand / marketing panel */}
         <section className="relative hidden overflow-hidden rounded-[28px] bg-[#0A0A0A] p-10 text-white lg:flex lg:flex-col lg:justify-between">
           <div

@@ -14,7 +14,7 @@ function HighlightedText({ text, query }) {
   return <>{text.slice(0, index)}<strong className="font-black text-[#282622]">{text.slice(index, index + needle.length)}</strong>{text.slice(index + needle.length)}</>;
 }
 
-export default function LocationAutocomplete({ value, onValueChange, options, label = "Pune location", placeholder = "Search locality or landmark" }) {
+export default function LocationAutocomplete({ value, onValueChange, options, label = "Pune location", placeholder = "Search locality or landmark", variant = "default" }) {
   const generatedId = useId();
   const inputId = `location-${generatedId.replaceAll(":", "")}`;
   const listboxId = `${inputId}-listbox`;
@@ -136,13 +136,14 @@ export default function LocationAutocomplete({ value, onValueChange, options, la
 
   const showDropdown = isDropdownOpen && Boolean(query.trim());
   const activeId = highlightedIndex >= 0 ? `${inputId}-option-${highlightedIndex}` : undefined;
+  const airbnb = variant === "airbnb";
 
   return <div ref={rootRef} className="relative min-w-0">
-    <label htmlFor={inputId} className="mb-1.5 block text-xs font-bold text-[#67625b]">{label}</label>
+    <label htmlFor={inputId} className={airbnb ? "mb-0.5 block text-xs font-extrabold text-[#282622]" : "mb-1.5 block text-xs font-bold text-[#67625b]"}>{label}</label>
     <div className="relative">
-      <Icon className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#747068]" name="map" size={17} />
+      <Icon className={`pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 ${airbnb ? "text-[#282622]" : "text-[#747068]"}`} name="map" size={17} />
       <input id={inputId} role="combobox" aria-autocomplete="list" aria-expanded={showDropdown} aria-controls={listboxId} aria-activedescendant={activeId}
-        className="min-h-12 w-full rounded-xl border border-[#d9d4cc] bg-white pl-10 pr-12 text-base font-bold text-[#282622] outline-none transition-[border-color,box-shadow] duration-200 placeholder:font-medium placeholder:text-[#67625b] focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 sm:text-sm"
+        className={airbnb ? "min-h-10 w-full border-0 bg-transparent pl-10 pr-12 text-sm font-semibold text-[#282622] outline-none placeholder:font-medium placeholder:text-[#67625b]" : "min-h-12 w-full rounded-xl border border-[#d9d4cc] bg-white pl-10 pr-12 text-base font-bold text-[#282622] outline-none transition-[border-color,box-shadow] duration-200 placeholder:font-medium placeholder:text-[#67625b] focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/20 sm:text-sm"}
         value={query} onChange={handleChange} onFocus={() => query.trim() && setIsDropdownOpen(true)} onKeyDown={handleKeyDown} placeholder={placeholder} autoComplete="off" spellCheck="false" />
       {query && <button type="button" onClick={clearSearch} aria-label="Clear location search" className="absolute right-0.5 top-1/2 flex min-h-11 min-w-11 -translate-y-1/2 items-center justify-center rounded-lg text-[#67625b] transition-colors duration-200 hover:bg-[#fff0e8] hover:text-[#d9470e] active:bg-[#ffe0d0] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[#ff5a1f]"><Icon name="close" size={18} /></button>}
     </div>

@@ -5,14 +5,12 @@ import { useRouter } from "next/navigation";
 import Icon from "./Icon";
 import ImageUploader from "./ImageUploader";
 import { PUNE_LOCATIONS } from "@/lib/pune-locations";
-import { syncFirebaseSession } from "@/lib/firebase-session";
 import {
-  assertFirebaseStorageReady,
-  deletePropertyImages,
+  cleanupPropertyImages,
+  submitProperty,
   uploadPropertyImages,
   validatePropertyImages,
-} from "@/lib/firebaseStorage";
-import { createPropertyRecord } from "@/lib/properties";
+} from "@/lib/cloudinaryStorage";
 
 const STEPS = ["Basics", "Rent & amenities", "Photos"];
 const AMENITIES = ["Parking", "Lift", "Gym", "Power Backup", "Security", "CCTV", "Balcony", "Water Supply"];
@@ -30,15 +28,23 @@ export default function BrokerPropertyForm({ user }) {
   const [step, setStep] = useState(0);
   const [form, setForm] = useState(EMPTY_FORM);
   const [files, setFiles] = useState([]);
+  const [pendingUpload, setPendingUpload] = useState(null);
   const [error, setError] = useState("");
   const [toast, setToast] = useState("");
   const [progress, setProgress] = useState(0);
-  const [submitStage, setSubmitStage] = useState("Checking Firebase Storage");
+  const [submitStage, setSubmitStage] = useState("Preparing secure upload");
   const [submitting, setSubmitting] = useState(false);
 
   const update = (event) => {
     const { name, value } = event.target;
     setForm((current) => ({ ...current, [name]: value }));
+    setError("");
+  };
+
+  const changeFiles = (nextFiles) => {
+    if (pendingUpload) cleanupPropertyImages(pendingUpload.batchId, pendingUpload.assets);
+    setPendingUpload(null);
+    setFiles(nextFiles);
     setError("");
   };
 
@@ -85,23 +91,28 @@ export default function BrokerPropertyForm({ user }) {
     setSubmitting(true);
     setError("");
     setProgress(0);
-    let uploadedUrls = [];
+    let upload = pendingUpload;
     try {
-      setSubmitStage("Checking Firebase Storage");
-      await assertFirebaseStorageReady();
-      setSubmitStage("Authorizing secure upload");
-      await syncFirebaseSession(user.id);
-      setSubmitStage("Uploading photos securely");
-      uploadedUrls = await uploadPropertyImages(files, setProgress, user.id);
+      if (!upload) {
+        setSubmitStage("Uploading photos securely");
+        upload = await uploadPropertyImages(files, setProgress);
+        setPendingUpload(upload);
+      } else {
+        setProgress(100);
+      }
       setSubmitStage("Saving property details");
-      await createPropertyRecord(form, uploadedUrls, user.id);
+      await submitProperty(form, upload);
+      setPendingUpload(null);
       setToast("Property uploaded and sent for admin review.");
       setForm(EMPTY_FORM);
       setFiles([]);
       setProgress(100);
       window.setTimeout(() => router.push("/properties"), 1200);
     } catch (uploadError) {
-      if (uploadedUrls.length) await deletePropertyImages(uploadedUrls);
+      if (upload && !String(uploadError?.message || "").includes("timed out") && !String(uploadError?.message || "").includes("network error")) {
+        await cleanupPropertyImages(upload.batchId, upload.assets);
+        setPendingUpload(null);
+      }
       showError(uploadError?.message || "The property could not be submitted. Please retry.");
       setProgress(0);
     } finally {
@@ -139,7 +150,7 @@ export default function BrokerPropertyForm({ user }) {
           })}</div></fieldset>
         </fieldset>}
 
-        {step === 2 && <div className="grid gap-6"><ImageUploader files={files} onChange={setFiles} progress={progress} uploading={submitting} statusLabel={submitStage} onError={setError}/><aside className="rounded-xl bg-[#F6F6F6] p-4"><h2 className="m-0 text-base font-bold text-[#161616]">Before you submit</h2><ul className="mb-0 mt-2 grid gap-1.5 pl-5 text-sm leading-5 text-[#555]"><li>Use recent, well-lit photos of the actual property.</li><li>The listing stays pending until an admin verifies it.</li><li>Rent and deposit must match the broker agreement.</li></ul></aside></div>}
+        {step === 2 && <div className="grid gap-6"><ImageUploader files={files} onChange={changeFiles} progress={progress} uploading={submitting} statusLabel={submitStage} onError={setError}/><aside className="rounded-xl bg-[#F6F6F6] p-4"><h2 className="m-0 text-base font-bold text-[#161616]">Before you submit</h2><ul className="mb-0 mt-2 grid gap-1.5 pl-5 text-sm leading-5 text-[#555]"><li>Use recent, well-lit photos of the actual property.</li><li>The listing stays pending until an admin verifies it.</li><li>Rent and deposit must match the broker agreement.</li></ul></aside></div>}
 
         <div className="mt-7 flex flex-col-reverse gap-3 min-[430px]:flex-row min-[430px]:justify-between">
           {step > 0 ? <button type="button" disabled={submitting} onClick={() => { setStep((current) => current - 1); setError(""); }} className="min-h-12 rounded-xl border border-[#CFCFCF] bg-white px-6 text-sm font-bold text-[#161616] transition-[border-color,transform] hover:border-[#161616] active:scale-95 disabled:opacity-45 motion-reduce:transform-none">Back</button> : <span/>}

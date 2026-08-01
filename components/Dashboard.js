@@ -99,7 +99,7 @@ function PropertySummary({ property }) {
 function DashboardSkeleton() {
   const placeholder = "animate-pulse rounded-[10px] bg-[var(--soft)]";
   return <main className="bg-transparent" aria-busy="true" aria-label="Loading marketplace dashboard">
-    <div className="mx-auto grid min-h-[75dvh] max-w-[var(--container)] gap-4 px-6 pt-[72px] pb-16 max-[640px]:px-4 max-[640px]:pt-10">
+    <div className="site-container grid min-h-[75dvh] gap-4 pt-[72px] pb-16 max-[640px]:pt-10">
       <div className={`${placeholder} h-[42px] w-2/5`}/>
       <div className={`${placeholder} h-[20px] w-[65%]`}/>
       <div className="grid grid-cols-3 gap-2">{ROLES.map((role) => <div className={`${placeholder} h-11`} key={role.id}/>)}</div>
@@ -426,7 +426,7 @@ export default function Dashboard() {
   };
 
   return <main className="bg-transparent text-[var(--ink)] [&_h2]:leading-tight [&_h2]:tracking-[-0.02em] [&_h3]:leading-tight">
-    <div className="mx-auto min-h-[75dvh] max-w-[var(--container)] px-6 pt-8 pb-24 max-[640px]:px-4 max-[640px]:pt-5 max-[390px]:pb-16">
+    <div className="site-container min-h-[75dvh] pt-8 pb-24 max-[640px]:pt-5 max-[390px]:pb-16">
       <header data-motion-reveal className="flex items-end justify-between gap-5 border-b border-[var(--line)] py-6 max-[640px]:flex-col max-[640px]:items-start max-[640px]:py-5">
         <div><span className="mb-2 inline-flex items-center gap-2 text-sm font-bold text-[var(--orange-dark)]"><Icon name={activeRole.icon} size={17}/> Live marketplace workspace</span><h1 className="max-w-[720px] text-[48px] font-extrabold leading-[1.08] tracking-[-0.035em] max-[640px]:text-[32px]">{isAdmin ? "Admin" : "Consultant"} dashboard</h1><p className="mt-2 mb-0 max-w-[620px] leading-6 text-[var(--muted)]">Post verified homes, manage Pune visits and track marketplace settlements in one place.</p></div>
         <button className={`${BUTTON_SECONDARY} ${BUTTON_SMALL} shrink-0`} type="button" onClick={() => { if (window.confirm("Restore the original RentkaroPune demo data? Your local changes will be removed.")) resetDemo(); }}><Icon name="reset" size={16}/> Reset demo</button>

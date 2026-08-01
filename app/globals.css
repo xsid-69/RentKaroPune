@@ -17,7 +17,8 @@
   --green: oklch(0.52 0.14 155); --green-soft: oklch(0.96 0.035 150); --red: oklch(0.53 0.2 28);
   --shadow-sm: 0 8px 24px rgb(10 10 10 / 7%); --shadow-lg: 0 28px 80px rgb(10 10 10 / 16%);
   --radius-sm: 12px; --radius: 18px; --radius-lg: 28px; --ease: cubic-bezier(.22,1,.36,1);
-  --container: 1240px; --z-sticky: 40; --z-dropdown: 50; --z-shell: 60; --z-nav: 70;
+  --container: 1240px; --page-gutter: clamp(1rem, 3vw, 2rem); --section-space: clamp(2.75rem, 6vw, 5rem);
+  --z-sticky: 40; --z-dropdown: 50; --z-shell: 60; --z-nav: 70;
   --z-backdrop: 80; --z-modal: 90; --z-toast: 100; --z-skip: 110;
 }
 
@@ -26,16 +27,10 @@
   body {
     min-width: 320px;
     min-height: 100vh;
-    font-family: Poppins, "Segoe UI", sans-serif;
+    font-family: Gilroy, Poppins, "Segoe UI", sans-serif;
     -webkit-font-smoothing: antialiased;
     color: var(--ink);
-    background:
-      radial-gradient(58rem 40rem at 10% -8%, oklch(0.95 0.045 55 / 0.55), transparent 60%),
-      radial-gradient(52rem 40rem at 106% 2%, oklch(0.95 0.03 250 / 0.42), transparent 55%),
-      radial-gradient(46rem 44rem at 82% 108%, oklch(0.95 0.04 150 / 0.35), transparent 60%),
-      linear-gradient(178deg, oklch(0.995 0.004 90), oklch(0.972 0.008 60));
-    background-attachment: fixed;
-    background-repeat: no-repeat;
+    background: var(--canvas);
   }
   :focus-visible { outline: 3px solid oklch(0.75 0.16 55); outline-offset: 3px; }
   button, select, a { touch-action: manipulation; }
@@ -43,6 +38,101 @@
   button:disabled { cursor: not-allowed; }
   h1, h2, h3 { text-wrap: balance; }
   p { text-wrap: pretty; }
+}
+
+@layer components {
+  .marketplace-hero {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 12% 18%, rgb(255 90 31 / 22%), transparent 30%),
+      radial-gradient(circle at 88% 8%, rgb(20 20 20 / 9%), transparent 27%),
+      radial-gradient(circle at 72% 92%, rgb(255 90 31 / 12%), transparent 31%),
+      linear-gradient(135deg, #fffaf7 0%, #fff 47%, #f4f2ee 100%);
+  }
+
+  .marketplace-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.32;
+    background-image: radial-gradient(rgb(40 38 34 / 28%) 0.7px, transparent 0.7px);
+    background-size: 22px 22px;
+    mask-image: linear-gradient(to bottom, black, transparent 88%);
+  }
+
+  .marketplace-hero::after {
+    content: "";
+    position: absolute;
+    width: min(36rem, 70vw);
+    aspect-ratio: 1;
+    right: -15rem;
+    top: -20rem;
+    border: 1px solid rgb(255 90 31 / 24%);
+    border-radius: 50%;
+    box-shadow: 0 0 0 5rem rgb(255 90 31 / 4%), 0 0 0 10rem rgb(255 90 31 / 3%);
+    pointer-events: none;
+  }
+
+  .site-container {
+    width: 100%;
+    max-width: calc(var(--container) + (var(--page-gutter) * 2));
+    margin-inline: auto;
+    padding-inline: var(--page-gutter);
+  }
+
+  .price-slider {
+    --range-progress: 100%;
+    width: 100%;
+    height: 6px;
+    margin: 8px 0;
+    appearance: none;
+    border-radius: 999px;
+    outline: none;
+    background: linear-gradient(to right, var(--orange) 0 var(--range-progress), #d8d8d8 var(--range-progress) 100%);
+    cursor: pointer;
+  }
+
+  .price-slider::-webkit-slider-thumb {
+    width: 22px;
+    height: 22px;
+    appearance: none;
+    border: 3px solid white;
+    border-radius: 50%;
+    background: var(--orange);
+    box-shadow: 0 0 0 1px var(--orange-dark), 0 3px 10px rgb(0 0 0 / 22%);
+  }
+
+  .price-slider::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border: 3px solid white;
+    border-radius: 50%;
+    background: var(--orange);
+    box-shadow: 0 0 0 1px var(--orange-dark), 0 3px 10px rgb(0 0 0 / 22%);
+  }
+
+  .price-slider:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 4px var(--orange-soft), 0 0 0 6px var(--orange); }
+  .price-slider:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 4px var(--orange-soft), 0 0 0 6px var(--orange); }
+
+  .property-rail-card {
+    flex: 0 0 min(82vw, 340px);
+    min-width: 0;
+  }
+
+  @media (min-width: 640px) {
+    .property-rail-card { flex-basis: calc((100% - 1.25rem) / 2); }
+  }
+
+  @media (min-width: 900px) {
+    .property-rail-card { flex-basis: calc((100% - 2.5rem) / 3); }
+  }
+
+  @media (min-width: 1200px) {
+    .property-rail-card { flex-basis: calc((100% - 3.75rem) / 4); }
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -5,7 +5,7 @@ import Icon from "./Icon";
 import {
   MAX_PROPERTY_IMAGES,
   validatePropertyImages,
-} from "@/lib/firebaseStorage";
+} from "@/lib/cloudinaryStorage";
 
 export default function ImageUploader({ files, onChange, progress = 0, uploading = false, statusLabel = "Uploading photos securely", onError }) {
   const inputRef = useRef(null);
@@ -66,7 +66,7 @@ export default function ImageUploader({ files, onChange, progress = 0, uploading
         <p className="mb-0 mt-3 font-bold text-[#161616]">Drop your photos here</p>
         <p className="mb-3 mt-1 text-sm text-[#666]">or choose them from your device</p>
         <button type="button" disabled={uploading || files.length >= MAX_PROPERTY_IMAGES} onClick={() => inputRef.current?.click()} className="min-h-11 rounded-xl bg-[#161616] px-5 text-sm font-bold text-white transition-[background-color,transform] duration-200 hover:bg-[#FF5B00] active:scale-95 disabled:cursor-not-allowed disabled:opacity-45 motion-reduce:transform-none">Choose photos</button>
-        <input ref={inputRef} className="sr-only" type="file" accept="image/jpeg,image/png,image/webp,image/avif" multiple disabled={uploading} onChange={(event) => { addFiles(event.target.files); event.target.value = ""; }} aria-label="Choose property photos" />
+        <input ref={inputRef} className="sr-only" type="file" accept="image/jpeg,image/png,image/webp" multiple disabled={uploading} onChange={(event) => { addFiles(event.target.files); event.target.value = ""; }} aria-label="Choose property photos" />
       </div>
     </div>
     {previews.length > 0 && <div className="mt-4 grid grid-cols-3 gap-2.5 min-[430px]:grid-cols-4 sm:gap-3" aria-label="Selected photo previews">

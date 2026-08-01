@@ -71,7 +71,7 @@ export default function Profile() {
   const propertiesById = useMemo(() => new Map((state.properties || []).map((property) => [property.id, property])), [state.properties]);
 
   if (loading || !ready || !user) {
-    return <main className="bg-transparent"><div className="mx-auto min-h-[70dvh] max-w-[var(--container)] px-6 pt-10 pb-16 max-[640px]:px-4"><div className="h-10 w-1/3 animate-pulse rounded-[10px] bg-[var(--soft)]"/><div className="mt-4 h-40 animate-pulse rounded-[14px] bg-[var(--soft)]"/></div></main>;
+    return <main className="bg-transparent"><div className="site-container min-h-[70dvh] pt-10 pb-16"><div className="h-10 w-1/3 animate-pulse rounded-[10px] bg-[var(--soft)]"/><div className="mt-4 h-40 animate-pulse rounded-[14px] bg-[var(--soft)]"/></div></main>;
   }
 
   const openTokenPayment = (property) => {
@@ -82,7 +82,7 @@ export default function Profile() {
   const contact = user.email || (user.phone ? `+91 ${user.phone}` : "");
 
   return <main className="bg-transparent text-[var(--ink)] [&_h2]:leading-tight [&_h2]:tracking-[-0.02em] [&_h3]:leading-tight">
-    <div className="mx-auto min-h-[75dvh] max-w-[var(--container)] px-6 pt-8 pb-24 max-[640px]:px-4 max-[640px]:pt-5">
+    <div className="site-container min-h-[75dvh] pt-8 pb-24 max-[640px]:pt-5">
       <header className="flex items-center justify-between gap-5 border-b border-[var(--line)] py-6 max-[640px]:flex-col max-[640px]:items-start">
         <div className="flex items-center gap-4">
           <Avatar user={user}/>

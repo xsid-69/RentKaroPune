@@ -9,37 +9,11 @@ service cloud.firestore {
     function isAdmin() {
       return signedIn() && (userRecord().admin == 1 || userRecord().role == "admin");
     }
-    function canList() {
-      return signedIn() && (isAdmin() || userRecord().role in ["broker", "consultant", "owner"]);
-    }
-
     match /properties/{propertyId} {
       allow get: if resource.data.status == "approved" ||
         (signedIn() && resource.data.brokerId == request.auth.uid) || isAdmin();
       allow list: if resource.data.status == "approved" || isAdmin();
-      allow create: if canList()
-        && request.resource.data.keys().hasOnly([
-          "id", "title", "bhk", "propertyType", "location", "address",
-          "rent", "deposit", "images", "amenities", "brokerId", "status", "createdAt"
-        ])
-        && request.resource.data.id == propertyId
-        && request.resource.data.brokerId == request.auth.uid
-        && request.resource.data.status == "pending"
-        && request.resource.data.title is string
-        && request.resource.data.bhk in ["1BHK", "2BHK", "3BHK", "4BHK+"]
-        && request.resource.data.propertyType in ["Flat", "Villa", "Bungalow"]
-        && request.resource.data.location is string
-        && request.resource.data.address is string
-        && request.resource.data.rent is number
-        && request.resource.data.rent > 0
-        && request.resource.data.deposit is number
-        && request.resource.data.deposit >= 0
-        && request.resource.data.images is list
-        && request.resource.data.images.size() > 0
-        && request.resource.data.images.size() <= 8
-        && request.resource.data.amenities is list
-        && request.resource.data.createdAt == request.time;
-      allow update, delete: if false;
+      allow create, update, delete: if false;
     }
 
     match /users/{userId} {
