@@ -36,11 +36,20 @@
   button, select, a { touch-action: manipulation; }
   button, select { cursor: pointer; }
   button:disabled { cursor: not-allowed; }
-  h1, h2, h3 { text-wrap: balance; }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: Gilroy, "Gilroy Regular", "Gilroy-Regular", Poppins, "Segoe UI", sans-serif;
+    font-weight: 500 !important;
+    text-wrap: balance;
+  }
   p { text-wrap: pretty; }
 }
 
 @layer components {
+  .gilroy-basic {
+    font-family: Gilroy, "Gilroy Regular", "Gilroy-Regular", Poppins, "Segoe UI", sans-serif;
+    font-weight: 500;
+  }
+
   .marketplace-hero {
     position: relative;
     isolation: isolate;
