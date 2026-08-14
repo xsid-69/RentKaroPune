@@ -20,8 +20,8 @@ function GoogleGlyph({ size = 18 }) {
 
 const perks = [
   { icon: "shield", title: "Verified listings only", copy: "Every home is checked before it goes live." },
-  { icon: "wallet", title: "Transparent fees", copy: "Flat unlocks, visits and loyalty brokerage." },
-  { icon: "user", title: "A broker on your side", copy: "Assigned support from unlock to move-in." },
+  { icon: "phone", title: "Public enquiries", copy: "WhatsApp and callback requests work without signing in." },
+  { icon: "user", title: "Staff workspace", copy: "Admins manage approvals and analytics; consultants list from their profile." },
 ];
 
 const redirectTarget = () => {
@@ -124,10 +124,10 @@ export default function LoginPage() {
               <Logo size={34} className="gap-2 [&_svg]:!text-white [&_[data-logo-word]>span:first-child]:!text-white [&_[data-logo-word]>span:last-child]:!text-[#FF7A33] [&_[data-logo-word]]:text-[22px]" />
             </Link>
             <h1 className="mt-12 max-w-[16ch] text-[clamp(2rem,3.4vw,3rem)] font-extrabold leading-[1.05] tracking-[-0.03em]">
-              Rent smarter. Pay less brokerage.
+              Your Pune listing workspace.
             </h1>
             <p className="mt-4 max-w-[36ch] text-[15px] leading-relaxed text-white/65">
-              Sign in to unlock verified Pune homes, book visits and track everything from one dashboard.
+              Signing in is optional for renters and gives consultants and admins access to property operations.
             </p>
           </div>
           <ul className="relative mt-10 grid gap-4">

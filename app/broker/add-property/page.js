@@ -22,7 +22,6 @@ export default function AddPropertyPage() {
 
   return <main className="min-h-screen bg-[#F7F7F7] pb-16 pt-8 sm:pt-12">
     <div className="site-container max-w-[832px]">
-      <Link href="/properties" className="inline-flex min-h-11 items-center gap-2 text-sm font-bold text-[#444] hover:text-[#FF5B00]"><span aria-hidden="true">←</span> Approved properties</Link>
       <header className="mb-6 mt-3"><p className="m-0 text-sm font-bold uppercase tracking-[0.12em] text-[#FF5B00]">Broker workspace</p><h1 className="mb-0 mt-2 text-[clamp(2rem,7vw,3.5rem)] font-black leading-[1.02] tracking-[-0.05em] text-[#0A0A0A]">Add a Pune property.</h1><p className="mb-0 mt-3 max-w-2xl text-base leading-7 text-[#5F5F5F]">Create a verified listing in three short steps. Photos upload securely and the property remains private until admin approval.</p></header>
       <BrokerPropertyForm user={user}/>
     </div>

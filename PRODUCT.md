@@ -1,27 +1,43 @@
 # RentkaroPune
 
-RentkaroPune is a Pune-first, tech-enabled rental marketplace for flats, villas, and bungalows. It replaces opaque high-brokerage discovery with verified listings, low-cost contact unlocks, transparent token holds, and assigned broker partners.
+RentkaroPune is a Pune-first rental listing website for verified flats, villas, and bungalows. Visitors can browse without an account, contact the team on WhatsApp, or request a callback.
 
 ## Audience
-Families, bachelors, students, tourists, migrants, owners, and verified broker partners in Pune.
+- Renters browsing approved Pune homes
+- Owners and consultants submitting properties
+- Admins verifying inventory and responding to enquiries
 
 ## Core flows
-1. Owner pays ₹100, submits a listing, and waits for admin verification.
-2. Admin verifies ownership documents and publishes the property.
-3. Client browses free and pays ₹100 to unlock the assigned broker contact.
-4. The first marketplace visit is free; every later visit costs ₹50.
-5. After the broker marks the visit complete, the client may pay a 15% rent token.
-6. Broker closes the deal; one month’s rent is the brokerage baseline, loyalty discount applies, then the collected brokerage splits 60% broker / 40% platform.
+1. Visitors browse and filter approved listings without signing in.
+2. A visitor uses standard WhatsApp buttons across the site. On a selected property’s mobile footer, the visitor can instead drag the accessible swipe control to open WhatsApp at +91 90216 15130; a direct-link fallback remains available in the property enquiry panel.
+3. Callback requests include preferred time and optional language preference: English, Hindi, Marathi, or no preference.
+4. The global automated support guide answers common rental questions and hands visitors off to WhatsApp, property search, or the callback popup.
+5. Admins view unique visitor totals and callback requests, then mark requests as new, contacted, or closed.
+6. Owners submit listings for verification.
+7. Admins approve properties and consultant applications.
 
-## Product decisions for this prototype
-- Contact unlock is ₹100 and reveals the assigned verified broker.
-- The first marketplace visit is free; every later visit costs ₹50 and is recorded in the ledger.
-- Token is fixed at 15% of monthly rent; cancellation returns 75% and records the remaining 25% as a platform charge.
-- Token is represented as a hold and is not included in platform revenue until cancellation or closure.
-- Baseline brokerage is one month’s rent and is client-funded.
-- Loyalty discounts are 10% on booking 1, 20% on booking 2, and 30% from booking 3 onward.
-- Owner listing fee applies from listing one.
-- Broker payout is calculated on closure.
+## Access model
+- Login is optional for public browsing and enquiries.
+- Signed-in members can manage a profile and request consultant access.
+- Consultants and owners submit verified properties from their profile.
+- The dashboard is admin-only and focuses on analytics, callback-request handling, and approvals (properties and consultant access).
+- Admin APIs enforce server-side role checks.
 
-## Register
-Product UI with a conversion-led discovery surface and operational multi-role dashboard.
+## Admin dashboard
+Admins see visitor analytics, all stored callback requests, the live property approval queue, and consultant access requests. Consultant and property submission workflows live on the profile, not the dashboard.
+
+## Callback lifecycle
+- Public visitors submit a callback request (name and Indian mobile required; message, email, preferred time, and preferred language optional).
+- Submissions are stored server-side in Firestore. A repeat submission from the same number for the same property updates the existing open request instead of creating a duplicate.
+- Each request is either New or Contacted. Admins mark a request Contacted with a single action; the row moves to the Contacted view. This is one-way and enforced in a server transaction, so a request can never be reopened.
+- The admin phone field is one-tap copyable, and new requests appear within seconds via background polling.
+
+## Security and privacy
+- Strict security headers site-wide: Content-Security-Policy, HSTS (production), X-Content-Type-Options, X-Frame-Options, Referrer-Policy, Permissions-Policy, COOP, CORP, and Origin-Agent-Cluster.
+- Authenticated and personal-data API responses are sent with no-store cache directives.
+- Callback and visitor collections are server-only in Firestore rules; no client can read or write personal enquiry data. Properties are publicly readable only when approved.
+- Public write endpoints enforce same-origin checks, JSON content-type, a honeypot field, input validation and normalization, and per-IP rate limiting.
+- Unique-visitor identity uses a signed, HttpOnly, one-year cookie hashed into a deterministic document id, so analytics never store raw identifiers.
+
+## Visitor counting
+A signed, HttpOnly browser cookie identifies a visitor for one year. A Firestore document with a deterministic hashed ID ensures repeat page visits from the same browser are counted once. A different browser, device, or cleared cookie is treated as a new visitor.

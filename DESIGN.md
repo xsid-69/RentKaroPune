@@ -15,13 +15,13 @@ A bright, high-trust marketplace with the energy of Pune street signage translat
 - Spacing: 4 / 8 / 12 / 16 / 24 / 32 / 48 / 72 / 96px
 
 ## Typography
-Outfit for display and interface copy, with system sans fallbacks. Large headings use restrained tracking and balanced wrapping. Financial values use tabular numerals.
+Outfit for display and interface copy, with system sans fallbacks. Large headings use restrained tracking and balanced wrapping. Numeric values use tabular numerals.
 
 ## Components
-Buttons have 48px minimum height, visible focus, stable hover states, and one primary action per region. Cards are used for independently actionable properties and records, never nested. Modals use a real dialog-like overlay, clear escape routes, and an explicit payment summary.
+Buttons have 48px minimum height, visible focus, stable hover states, and one primary action per region. Cards are used for independently actionable properties and records, never nested. The callback form is a centered popup on larger screens and a safe-area-aware bottom sheet on phones, with focus trapping, focus restoration, labelled fields, and inline submission feedback. WhatsApp uses conventional buttons throughout the product; only the selected-property mobile footer uses the physical left-to-right drag control, with keyboard operation and a direct-link fallback available in the property enquiry area. The automated support guide uses a recognizable chat launcher, agent identity, conversational message bubbles, quick replies, and a lower-right desktop popover/mobile bottom sheet.
 
 ## Motion
-180–280ms ease-out transitions communicate hover, modal entry, tab changes, and completion. Reduced-motion disables transforms and nonessential animation.
+180–280ms ease-out transitions communicate hover, modal entry, tab changes, gesture completion, and support-panel entry. Reduced-motion disables transforms and nonessential animation.
 
 ## Accessibility
-WCAG AA contrast, labelled fields, keyboard-operable controls, semantic tables, aria-live feedback, non-color status labels, and responsive layouts from 360px upward.
+WCAG AA contrast, labelled fields, keyboard-operable controls, semantic records, aria-live feedback, non-color status labels, focus containment for modal UI, and responsive layouts down to 320px. Fixed mobile actions and sheets respect device safe-area insets.

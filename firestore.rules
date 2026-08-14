@@ -9,6 +9,9 @@ service cloud.firestore {
     function isAdmin() {
       return signedIn() && (userRecord().admin == 1 || userRecord().role == "admin");
     }
+
+    // Public can read only approved properties. Brokers can read their own.
+    // All writes go through server APIs using the Admin SDK, never the client.
     match /properties/{propertyId} {
       allow get: if resource.data.status == "approved" ||
         (signedIn() && resource.data.brokerId == request.auth.uid) || isAdmin();
@@ -16,11 +19,26 @@ service cloud.firestore {
       allow create, update, delete: if false;
     }
 
+    // User records are private to the owner and admins; never client-writable.
     match /users/{userId} {
       allow read: if signedIn() && (request.auth.uid == userId || isAdmin());
       allow write: if false;
     }
 
+    // Callback enquiries contain personal data (name, phone, email). They are
+    // written and read exclusively by the server Admin SDK, which bypasses these
+    // rules. No client — signed in or not — may touch this collection directly.
+    match /callRequests/{requestId} {
+      allow read, write: if false;
+    }
+
+    // Deduplicated unique-visitor documents are aggregate analytics only and are
+    // never exposed to clients. Counting happens server-side via the Admin SDK.
+    match /uniqueVisitors/{visitorId} {
+      allow read, write: if false;
+    }
+
+    // Default deny for anything not explicitly allowed above.
     match /{document=**} { allow read, write: if false; }
   }
 }

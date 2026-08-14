@@ -6,6 +6,8 @@ import { usePathname } from "next/navigation";
 import Icon from "./Icon";
 import Logo from "./Logo";
 import SmoothScroll from "./SmoothScroll";
+import SupportChatbot from "./SupportChatbot";
+import BackButton from "./BackButton";
 import AccountControl from "./AccountControl";
 import { useMarketplace } from "@/lib/marketplace-context";
 import { useAuth } from "@/lib/auth-context";
@@ -17,12 +19,12 @@ export default function AppShell({ children }) {
   const path = usePathname();
   const { toast } = useMarketplace();
   const { user } = useAuth();
-  const isStaff = Boolean(user && (user.admin === 1 || user.role === "consultant"));
+  const isAdmin = Boolean(user && user.admin === 1);
 
   const mobileRoutes = [
     { href: "/", label: "Discover", subtitle: "Browse verified homes across Pune", route: "discover" },
-    ...(isStaff ? [{ href: "/dashboard", label: "Dashboard", subtitle: "Manage listings, visits and settlements", route: "dashboard" }] : []),
-    ...(user ? [{ href: "/profile", label: "Profile", subtitle: "Your rentals, loyalty and listings", route: "profile" }] : []),
+    ...(isAdmin ? [{ href: "/dashboard", label: "Dashboard", subtitle: "Approvals, callbacks and visitor analytics", route: "dashboard" }] : []),
+    ...(user ? [{ href: "/profile", label: "Profile", subtitle: "Account and property listing tools", route: "profile" }] : []),
     { href: "/broker/add-property", label: "List property", subtitle: "Upload a verified Pune rental", accent: true },
   ];
   const [menuOpen, setMenuOpen] = useState(false);
@@ -44,14 +46,15 @@ export default function AppShell({ children }) {
       }
       if (event.key !== "Tab") return;
 
-      const mobileLinks = Array.from(document.querySelectorAll("#mobile-navigation [data-mobile-link]"));
-      const lastLink = mobileLinks.at(-1);
-      if (!event.shiftKey && document.activeElement === lastLink) {
+      const focusableControls = Array.from(document.querySelectorAll("#mobile-navigation a[href]:not([tabindex='-1']), #mobile-navigation button:not([disabled]):not([tabindex='-1']), #mobile-navigation input:not([disabled]):not([tabindex='-1']), #mobile-navigation select:not([disabled]):not([tabindex='-1']), #mobile-navigation [tabindex]:not([tabindex='-1'])"));
+      const firstControl = focusableControls[0];
+      const lastControl = focusableControls.at(-1);
+      if (!event.shiftKey && document.activeElement === lastControl) {
         event.preventDefault();
-        menuButtonRef.current?.focus();
-      } else if (event.shiftKey && document.activeElement === menuButtonRef.current) {
+        firstControl?.focus();
+      } else if (event.shiftKey && document.activeElement === firstControl) {
         event.preventDefault();
-        lastLink?.focus();
+        lastControl?.focus();
       }
     };
     const desktopQuery = window.matchMedia("(min-width: 861px)");
@@ -80,7 +83,7 @@ export default function AppShell({ children }) {
     <header className="sticky top-0 z-[var(--z-nav)] bg-transparent pb-2 pl-[calc(env(safe-area-inset-left)+0.5rem)] pr-[calc(env(safe-area-inset-right)+0.5rem)] pt-[calc(env(safe-area-inset-top)+0.5rem)] min-[861px]:border-b min-[861px]:border-[#E5E5E5] min-[861px]:bg-white min-[861px]:p-0 min-[861px]:pt-[env(safe-area-inset-top)]">
       <div className="site-container flex h-16 items-center justify-between rounded-2xl border border-[#E5E5E5] bg-white shadow-[0_8px_24px_rgba(10,10,10,0.08)] min-[861px]:h-[72px] min-[861px]:rounded-none min-[861px]:border-0 min-[861px]:shadow-none">
         <Link className="inline-flex items-center focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#FF5B00]" href="/" aria-label="RentKaro home" tabIndex={menuOpen ? -1 : undefined}><Logo size={36} className={`${logoColors} gap-2 [&_[data-logo-word]]:text-[22px]`} /></Link>
-        <nav className="hidden items-center gap-7 min-[861px]:flex" aria-label="Primary navigation" aria-hidden={menuOpen ? true : undefined}><Link className={`${desktopLink} ${isDiscover ? activeDesktop : inactiveDesktop}`} href="/" tabIndex={menuOpen ? -1 : undefined}>Discover</Link>{isStaff && <Link className={`${desktopLink} ${isDashboard ? activeDesktop : inactiveDesktop}`} href="/dashboard" tabIndex={menuOpen ? -1 : undefined}>Dashboard</Link>}{user && <Link className={`${desktopLink} ${isProfile ? activeDesktop : inactiveDesktop}`} href="/profile" tabIndex={menuOpen ? -1 : undefined}>Profile</Link>}<Link className={`${desktopLink} border-transparent text-[#FF5B00] hover:border-[#FF5B00]`} href="/broker/add-property" tabIndex={menuOpen ? -1 : undefined}>List property</Link><AccountControl variant="desktop" tabIndex={menuOpen ? -1 : undefined} /></nav>
+        <nav className="hidden items-center gap-7 min-[861px]:flex" aria-label="Primary navigation" aria-hidden={menuOpen ? true : undefined}><Link className={`${desktopLink} ${isDiscover ? activeDesktop : inactiveDesktop}`} href="/" tabIndex={menuOpen ? -1 : undefined}>Discover</Link>{isAdmin && <Link className={`${desktopLink} ${isDashboard ? activeDesktop : inactiveDesktop}`} href="/dashboard" tabIndex={menuOpen ? -1 : undefined}>Dashboard</Link>}{user && <Link className={`${desktopLink} ${isProfile ? activeDesktop : inactiveDesktop}`} href="/profile" tabIndex={menuOpen ? -1 : undefined}>Profile</Link>}<Link className={`${desktopLink} border-transparent text-[#FF5B00] hover:border-[#FF5B00]`} href="/broker/add-property" tabIndex={menuOpen ? -1 : undefined}>List property</Link><AccountControl variant="desktop" tabIndex={menuOpen ? -1 : undefined} /></nav>
         <button ref={menuButtonRef} className="relative flex size-11 items-center justify-center text-[#0A0A0A] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FF5B00] min-[861px]:hidden" type="button" aria-expanded={menuOpen} aria-controls="mobile-navigation" aria-label={menuOpen ? "Close menu" : "Open menu"} onClick={() => setMenuOpen((open) => !open)}>
           <span className={`absolute h-0.5 w-5 bg-current transition-[transform,opacity] duration-300 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${menuOpen ? "rotate-45" : "-translate-y-1"}`} />
           <span className={`absolute h-0.5 w-5 bg-current transition-[transform,opacity] duration-300 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${menuOpen ? "-rotate-45" : "translate-y-1"}`} />
@@ -126,13 +129,14 @@ export default function AppShell({ children }) {
         </div>
         <div className={`border-t border-white/10 pt-4 text-[12px] leading-relaxed text-white/55 transition-[opacity,transform] duration-300 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] motion-reduce:transform-none motion-reduce:transition-none ${menuOpen ? "translate-y-0 opacity-100 delay-300" : "translate-y-2 opacity-0"}`}>
           <p className="m-0 font-semibold text-white">RentKaro Pune</p>
-          <p className="m-0 mt-0.5">Verified listings · Assigned consultant support · Transparent fees</p>
+          <p className="m-0 mt-0.5">Verified listings · WhatsApp enquiries · Callback support</p>
         </div>
       </div>
     </div>
 
-    <div id="main-content" tabIndex="-1" className="outline-none" inert={menuOpen} aria-hidden={menuOpen ? true : undefined}>{children}</div>
+    <div id="main-content" tabIndex="-1" className="outline-none" inert={menuOpen} aria-hidden={menuOpen ? true : undefined}><BackButton hidden={menuOpen} />{children}</div>
     <footer className="border-t border-[#E5E5E5] bg-white" inert={menuOpen} aria-hidden={menuOpen ? true : undefined}><div className="site-container flex flex-col gap-4 py-7 text-sm text-[#666666] sm:flex-row sm:items-center sm:justify-between"><Link className="inline-flex w-fit items-center focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#FF5B00]" href="/" aria-label="RentKaro home"><Logo size={28} className={`${logoColors} gap-1.5 [&_[data-logo-word]]:text-[18px]`} /></Link><p className="m-0 max-w-[32ch] leading-6">Pune rentals, without the usual friction.</p><div className="flex min-h-11 items-center gap-3" aria-label="Legal information"><span>Privacy</span><span aria-hidden="true">·</span><span>Terms</span></div></div></footer>
+    <SupportChatbot propertyPage={path.startsWith("/properties/")} suspended={menuOpen}/>
     <div className={`pointer-events-none fixed bottom-[calc(env(safe-area-inset-bottom)+1rem)] left-[calc(env(safe-area-inset-left)+1rem)] right-[calc(env(safe-area-inset-right)+1rem)] z-[var(--z-toast)] ml-auto flex max-w-[400px] items-center gap-2.5 rounded-xl border border-[#161616] bg-[#0A0A0A] px-4 py-3 text-sm font-semibold text-white shadow-[var(--shadow-lg)] transition-[opacity,transform] duration-200 ${toast ? "visible translate-y-0 opacity-100" : "invisible translate-y-2 opacity-0"}`} role="status" aria-live="polite" aria-atomic="true"><Icon name="check" className="shrink-0 text-[#FF5B00]" />{toast}</div>
   </>;
 }
