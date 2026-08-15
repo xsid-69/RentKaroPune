@@ -83,7 +83,7 @@ export default function PropertyDetails() {
           <strong className="text-3xl tabular-nums">₹{property.rent.toLocaleString("en-IN")}</strong><span className="font-semibold text-[var(--muted)]"> / month</span><p className="mt-2 text-sm text-[var(--muted)]">Deposit ₹{property.deposit.toLocaleString("en-IN")} · {property.status}</p>
           <div className="my-5 border-y border-[var(--line)] py-5"><span className="text-sm font-bold text-[var(--orange-dark)]">Free enquiry</span><h2 className="mt-2 text-xl font-extrabold">Interested in this home?</h2><p className="mt-2 text-sm leading-6 text-[var(--muted)]">Contact us directly without creating an account.</p></div>
           <div className="grid gap-3"><a className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#168a45] px-5 font-bold text-white transition-[background-color,transform] duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:bg-[#10763a] active:scale-[.98]" href={whatsappHref} target="_blank" rel="noreferrer"><Icon name="phone" size={18}/> WhatsApp this property</a><button className={`${secondaryButton} w-full`} type="button" onClick={() => setCallbackOpen(true)}><Icon name="phone" size={18}/> Request a call</button></div>
-          <p className="mb-0 mt-3 text-center text-xs text-[var(--muted)]">WhatsApp: +91 90216 15130</p>
+          <p className="mb-0 mt-3 text-center text-xs text-[var(--muted)]">WhatsApp: +91 70453 08514</p>
         </aside>
       </div>
     </main>

@@ -7,6 +7,7 @@ import DashboardDiscovery from "./DashboardDiscovery";
 import Icon from "./Icon";
 import LocationAutocomplete from "./LocationAutocomplete";
 import Reveal from "./Reveal";
+import SelectField from "./SelectField";
 import { useMarketplace } from "@/lib/marketplace-context";
 import { PUNE_LOCATIONS } from "@/lib/pune-locations";
 import { whatsappUrl } from "@/lib/whatsapp";
@@ -41,20 +42,22 @@ export default function HomeDiscovery() {
   const [callbackOpen, setCallbackOpen] = useState(false);
   const [appliedFilters, setAppliedFilters] = useState({ locality: "", budget: "any", bhk: "Airbnb" });
   const inventory = useMemo(() => (Array.isArray(state?.properties) ? state.properties : []).filter((property) => property?.approved === true && property.status === "Available" && Number(property.rent) >= 10000), [state?.properties]);
+  // Location suggestions are Pune areas/localities only — never property or
+  // building names. We add each listing's locality area, normalised to "Area, Pune".
   const localities = useMemo(() => Array.from(new Set([
     ...PUNE_LOCATIONS,
-    ...inventory.flatMap((property) => {
-      const address = String(property.address ?? "").trim();
+    ...inventory.map((property) => {
       const propertyLocality = String(property.locality ?? "").trim();
-      const localityLabel = propertyLocality && (propertyLocality.includes(",") ? propertyLocality : `${propertyLocality}, Pune`);
-      return [address, localityLabel].filter(Boolean);
-    })
+      if (!propertyLocality) return "";
+      return propertyLocality.includes(",") ? propertyLocality : `${propertyLocality}, Pune`;
+    }).filter(Boolean)
   ])).sort((a, b) => a.localeCompare(b)), [inventory]);
   const filtered = useMemo(() => {
     const normalizedQuery = appliedFilters.locality.trim().toLocaleLowerCase("en-IN");
     const queryParts = normalizedQuery.split(",").map((part) => part.trim()).filter(Boolean);
     return inventory.filter((property) => {
-      const searchableLocation = [property.title, property.address, property.locality, property.location]
+      // Match by location fields only (no property title) so search stays location-based.
+      const searchableLocation = [property.address, property.locality, property.location]
         .map((value) => String(value ?? "").toLocaleLowerCase("en-IN"))
         .filter(Boolean)
         .join(" ");
@@ -82,11 +85,11 @@ export default function HomeDiscovery() {
       <header className="mx-auto max-w-3xl text-center"><p className="m-0 motion-safe:animate-rise text-sm font-bold text-[#e84c12]" style={{ animationDelay: "60ms" }}>Verified rentals across Pune</p><h1 className="gilroy-basic mb-0 mt-2 motion-safe:animate-rise text-[clamp(2.6rem,6vw,5rem)] leading-[1.01] tracking-[-0.04em] text-balance" style={{ animationDelay: "120ms" }}>A better rental feed for Pune.</h1><p className="mx-auto mb-0 mt-4 max-w-[60ch] motion-safe:animate-rise text-base leading-7 text-[#5f5a53]" style={{ animationDelay: "200ms" }}>Browse approved homes from ₹10,000. Contact our Pune team on WhatsApp or request a callback—no payment or login required.</p></header>
       <form className="mx-auto mt-9 max-w-5xl motion-safe:animate-rise rounded-[28px] border border-[#d9d6d1] bg-white shadow-[0_18px_55px_rgb(40_38_34/11%)]" style={{ animationDelay: "280ms" }} aria-label="Search rental homes" onSubmit={submitSearch}>
         <div className="grid items-stretch lg:grid-cols-[minmax(0,1.5fr)_minmax(210px,0.7fr)_auto]">
-          <div className="px-5 py-3.5 lg:px-6"><LocationAutocomplete value={locality} onValueChange={setLocality} options={localities} label="Where" placeholder="Search locality or full address" variant="airbnb" /></div>
-          <label className="min-w-0 border-t border-[#e5e1da] px-5 py-3.5 lg:border-l lg:border-t-0"><span className="mb-1 block text-xs font-extrabold text-[#282622]">Monthly rent</span><select className="min-h-10 w-full border-0 bg-transparent text-sm font-semibold text-[#282622] outline-none" value={budget} onChange={(event) => setBudget(event.target.value)}>{BUDGETS.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select></label>
+          <div className="px-5 py-3.5 lg:px-6"><LocationAutocomplete value={locality} onValueChange={setLocality} options={localities} label="Where" placeholder="Search Pune locality or area" variant="airbnb" /></div>
+          <div className="min-w-0 border-t border-[#e5e1da] px-5 py-3.5 lg:border-l lg:border-t-0"><SelectField label="Monthly rent" ariaLabel="Monthly rent" value={budget} onChange={setBudget} options={BUDGETS} buttonClassName="min-h-10 text-sm font-semibold text-[#282622]" /></div>
           <div className="flex items-center p-3 lg:pl-2"><button type="submit" className="group inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-[#ff5a1f] px-6 text-sm font-extrabold text-white transition-[background-color,transform] duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:bg-[#d9470e] active:scale-[.98] lg:w-auto"><Icon name="search" size={18}/> Search</button></div>
         </div>
-        <fieldset className="border-t border-[#e5e1da] px-3 py-3 sm:px-5"><legend className="sr-only">Bedrooms and collections</legend><div className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:flex-wrap sm:justify-center sm:overflow-visible">{BHK_OPTIONS.map((item) => <button key={item} type="button" aria-pressed={bhk === item} onClick={() => setBhk(item)} className={bhk === item ? "min-h-10 shrink-0 rounded-full bg-[#282622] px-4 text-sm font-extrabold text-white transition-transform active:scale-[0.98]" : "min-h-10 shrink-0 rounded-full border border-[#d9d4cc] bg-white px-4 text-sm font-bold text-[#57534d] transition-[background-color,border-color,color,transform] hover:border-[#282622] hover:text-[#282622] active:scale-[0.98]"}>{item === "All" ? "Any BHK" : item.replace(" ", "")}</button>)}</div></fieldset>
+        <fieldset className="min-w-0 border-t border-[#e5e1da] px-3 py-3 sm:px-5"><legend className="sr-only">Bedrooms and collections</legend><div className="-mx-1 flex min-w-0 gap-2 overflow-x-auto px-1 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:flex-wrap sm:justify-center sm:overflow-visible">{BHK_OPTIONS.map((item) => <button key={item} type="button" aria-pressed={bhk === item} onClick={() => setBhk(item)} className={bhk === item ? "min-h-11 shrink-0 rounded-full bg-[#282622] px-4 text-sm font-extrabold text-white shadow-[0_6px_16px_rgb(40_38_34/22%)] transition-transform duration-200 active:scale-[0.96]" : "min-h-11 shrink-0 rounded-full border border-[#d9d4cc] bg-white px-4 text-sm font-bold text-[#57534d] transition-[background-color,border-color,color,transform] duration-200 hover:border-[#282622] hover:text-[#282622] active:scale-[0.96]"}>{item === "All" ? "Any BHK" : item.replace(" ", "")}</button>)}</div></fieldset>
       </form>
       <p className="mb-0 mt-3 motion-safe:animate-rise text-center text-xs font-medium text-[#716c65]" style={{ animationDelay: "360ms" }}>Choose your filters, then press Search to update the homes below.</p>
     </div></section>

@@ -9,7 +9,7 @@ RentkaroPune is a Pune-first rental listing website for verified flats, villas, 
 
 ## Core flows
 1. Visitors browse and filter approved listings without signing in.
-2. A visitor uses standard WhatsApp buttons across the site. On a selected property’s mobile footer, the visitor can instead drag the accessible swipe control to open WhatsApp at +91 90216 15130; a direct-link fallback remains available in the property enquiry panel.
+2. A visitor uses standard WhatsApp buttons across the site. On a selected property’s mobile footer, the visitor can instead drag the accessible swipe control to open WhatsApp at +91 70453 08514; a direct-link fallback remains available in the property enquiry panel.
 3. Callback requests include preferred time and optional language preference: English, Hindi, Marathi, or no preference.
 4. The global automated support guide answers common rental questions and hands visitors off to WhatsApp, property search, or the callback popup.
 5. Admins view unique visitor totals and callback requests, then mark requests as new, contacted, or closed.
