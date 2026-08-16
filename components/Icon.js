@@ -20,7 +20,9 @@ export default function Icon({ name, size = 20, className = "" }) {
     share: <><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="m8.2 10.8 7.6-4.6M8.2 13.2l7.6 4.6"/></>,
     reset: <><path d="M4 4v6h6"/><path d="M5.5 15A8 8 0 1 0 6 8l-2 2"/></>,
     copy: <><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></>,
-    chevron: <path d="m6 9 6 6 6-6"/>
+    chevron: <path d="m6 9 6 6 6-6"/>,
+    bell: <><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></>,
+    download: <><path d="M12 3v12"/><path d="m8 11 4 4 4-4"/><path d="M5 21h14"/></>
   };
   return <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{paths[name]}</svg>;
 }

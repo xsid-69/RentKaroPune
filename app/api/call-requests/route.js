@@ -37,8 +37,8 @@ export async function POST(request) {
   const preferredTime = ["anytime", "morning", "afternoon", "evening"].includes(body?.preferredTime) ? body.preferredTime : "anytime";
   const preferredLanguage = ["no-preference", "english", "hindi", "marathi"].includes(body?.preferredLanguage) ? body.preferredLanguage : "no-preference";
 
-  if (name.length < 2 || !phone || email === null || body?.consent !== true) {
-    return NextResponse.json({ error: "Enter a valid name and Indian mobile number, then confirm consent." }, { status: 400 });
+  if (name.length < 2 || !phone || !email || body?.consent !== true) {
+    return NextResponse.json({ error: "Enter a valid name, Indian mobile number, and email address, then confirm consent." }, { status: 400 });
   }
 
   try {
