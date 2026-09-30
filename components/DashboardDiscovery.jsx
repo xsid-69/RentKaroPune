@@ -6,9 +6,28 @@ import Icon from "./Icon";
 
 const money = (value) => Number(value || 0).toLocaleString("en-IN");
 function RailCard({ property }) {
+  const isOwner = property.isOwner ?? (property.listedBy === "owner" || !property.contact?.agent?.toLowerCase().includes("broker"));
   return <Link href={`/properties/${property.id}`} className="property-rail-card group block snap-start rounded-[26px] bg-white/70 p-1.5 text-[#222] ring-1 ring-[#e5dfd6] transition-[transform,box-shadow] duration-500 ease-[cubic-bezier(.22,1,.36,1)] hover:-translate-y-1 hover:shadow-[0_22px_55px_rgb(56_48_40/13%)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#ff5a1f]/25 motion-reduce:transform-none">
-    <span className="relative block aspect-[4/3] overflow-hidden rounded-[21px] bg-[#eae5de]"><img src={property.images?.[0]} alt={`${property.title} in ${property.location || property.locality}`} className="h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-[1.04] motion-reduce:transform-none" loading="lazy"/><span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-white/95 px-3 py-1.5 text-[11px] font-extrabold shadow-[0_6px_20px_rgb(0_0_0/10%)]"><span className="size-1.5 rounded-full bg-[#2ba866]"/> Verified</span><span className="absolute right-3 top-3 grid size-10 place-items-center rounded-full bg-[#282622]/75 text-white transition-transform duration-300 ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-105"><Icon name="arrow" size={17}/></span></span>
-    <span className="block px-3 pb-3 pt-3"><span className="block truncate text-base font-extrabold">{property.title}</span><span className="mt-1 block truncate text-sm text-[#6a645c]">{property.location || property.locality} · {property.bhk}</span><span className="mt-3 flex items-end justify-between gap-3 border-t border-[#ebe5dc] pt-3"><span className="text-lg font-black tabular-nums">₹{money(property.rent)} <span className="text-xs font-medium text-[#777067]">/ month</span></span><span className="text-[10px] font-extrabold uppercase tracking-[0.12em] text-[#d9470e]">View home</span></span></span>
+    <span className="relative block aspect-[4/3] overflow-hidden rounded-[21px] bg-[#eae5de]">
+      <img src={property.images?.[0]} alt={`${property.title} in ${property.location || property.locality}`} className="h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-[1.04] motion-reduce:transform-none" loading="lazy"/>
+      <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-white/95 px-3 py-1.5 text-[11px] font-extrabold shadow-[0_6px_20px_rgb(0_0_0/10%)]">
+        <span className="size-1.5 rounded-full bg-[#2ba866]"/> Verified
+      </span>
+      <span className={`absolute left-3 bottom-3 rounded-md px-2 py-0.5 text-[10px] font-black shadow-sm ${isOwner ? "bg-emerald-600 text-white" : "bg-amber-600 text-white"}`}>
+        {isOwner ? "0% Brokerage" : "Broker"}
+      </span>
+      <span className="absolute right-3 top-3 grid size-10 place-items-center rounded-full bg-[#282622]/75 text-white transition-transform duration-300 ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-105">
+        <Icon name="arrow" size={17}/>
+      </span>
+    </span>
+    <span className="block px-3 pb-3 pt-3">
+      <span className="block truncate text-base font-extrabold">{property.title}</span>
+      <span className="mt-1 block truncate text-sm text-[#6a645c]">{property.location || property.locality} · {property.bhk}</span>
+      <span className="mt-3 flex items-end justify-between gap-3 border-t border-[#ebe5dc] pt-3">
+        <span className="text-lg font-black tabular-nums">₹{money(property.rent)} <span className="text-xs font-medium text-[#777067]">/ month</span></span>
+        <span className="text-[10px] font-extrabold uppercase tracking-[0.12em] text-[#d9470e]">View home</span>
+      </span>
+    </span>
   </Link>;
 }
 function Rail({ title, properties }) {

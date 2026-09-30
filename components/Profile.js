@@ -77,8 +77,31 @@ export default function Profile() {
         <button className={`${BUTTON_SECONDARY} shrink-0 max-[640px]:w-full`} type="button" onClick={() => signOut()}><Icon name="arrow" size={16} className="rotate-180"/> Sign out</button>
       </header>
       <div className="mt-6 grid gap-5 max-[640px]:gap-4">
+        {/* Landlord & Commercial Plans card */}
+        <section className={`${SECTION_STYLES} bg-stone-50 border-stone-200`} aria-labelledby="owner-plans-title">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-3 py-0.5 text-xs font-black text-emerald-800">
+                <Icon name="shield" size={14}/> Landlord & Owner Hub
+              </span>
+              <h2 className="mt-2 mb-1 text-[22px] font-black" id="owner-plans-title">List Free or Boost with Monthly Plans</h2>
+              <p className="m-0 max-w-[62ch] text-xs leading-5 text-[var(--muted)]">
+                Direct owners list with 100% Zero Brokerage. First 7 days are completely free. Upgrade to monthly lead plans or get a Verified Badge to rank on top of Pune search.
+              </p>
+            </div>
+            <div className="flex flex-wrap items-center gap-2.5">
+              <Link href="/plans" className={BUTTON_SECONDARY}>
+                View Plans & Badges <Icon name="arrow" size={15}/>
+              </Link>
+              <Link href="/broker/add-property" className={BUTTON_PRIMARY}>
+                Post New Property (Free) <Icon name="arrow" size={15}/>
+              </Link>
+            </div>
+          </div>
+        </section>
+
         <ConsultantCard user={user} applyForConsultant={applyForConsultant}/>
-        <section className={SECTION_STYLES} aria-labelledby="optional-account-title"><span className="text-sm font-bold text-[var(--orange-dark)]">Optional account</span><h2 className="mb-1 mt-1 text-[24px]" id="optional-account-title">Browse without signing in</h2><p className="m-0 max-w-[62ch] text-sm text-[var(--muted)]">Your account is only needed for profile, consultant, and admin tools. Property browsing, WhatsApp enquiries, and callback requests stay public.</p></section>
+        <section className={SECTION_STYLES} aria-labelledby="optional-account-title"><span className="text-sm font-bold text-[var(--orange-dark)]">Transparent Marketplace</span><h2 className="mb-1 mt-1 text-[24px]" id="optional-account-title">Direct Owners & Verified Brokers</h2><p className="m-0 max-w-[62ch] text-sm text-[var(--muted)]">RentKaro Pune maintains 100% transparency. Owners connect with zero brokerage, while broker fees are clearly disclosed to renters upfront.</p></section>
         <section aria-labelledby="list-your-property-title"><h2 className="mb-4 text-[24px] font-extrabold tracking-[-0.02em]" id="list-your-property-title">List your property</h2><PropertyListingForm heading="List your home" subheading="Submit your Pune property for admin verification before it goes live." listedByRole="owner"/></section>
       </div>
     </div>

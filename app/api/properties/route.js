@@ -38,7 +38,33 @@ export async function POST(request) {
     await verifyCloudinaryAssets(assetCheck.assets);
     const ref = getDb().collection("properties").doc(`cloudinary-${payload.batchId}`);
     const form = payload.form;
-    const property = { id: ref.id, title: clean(form.title, 120), bhk: form.bhk, propertyType: form.propertyType, location: clean(form.location, 120), address: clean(form.address, 300), rent: Number(form.rent), deposit: Number(form.deposit), amenities: form.amenities, images: assetCheck.assets.map((asset) => asset.secureUrl), imageAssets: assetCheck.assets, cloudinaryBatchId: payload.batchId, brokerId: user.id, status: "pending", createdAt: FieldValue.serverTimestamp() };
+    const isBroker = form.listedBy === "broker";
+    const sevenDaysLater = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+    const property = {
+      id: ref.id,
+      title: clean(form.title, 120),
+      bhk: form.bhk,
+      propertyType: form.propertyType,
+      location: clean(form.location, 120),
+      address: clean(form.address, 300),
+      rent: Number(form.rent),
+      deposit: Number(form.deposit),
+      amenities: form.amenities,
+      images: assetCheck.assets.map((asset) => asset.secureUrl),
+      imageAssets: assetCheck.assets,
+      cloudinaryBatchId: payload.batchId,
+      brokerId: user.id,
+      listedBy: isBroker ? "broker" : "owner",
+      brokerage: isBroker ? clean(form.brokerage || "Standard 1 Month Brokerage", 80) : "0% (Zero Brokerage)",
+      verifiedBadge: Boolean(form.verifiedBadge),
+      adPlan: "free",
+      adStatus: "active",
+      freeAdExpiresAt: sevenDaysLater,
+      contactPhone: clean(form.contactPhone || user.phone || "7045308514", 15),
+      contactName: clean(form.contactName || user.name || (isBroker ? "Broker" : "Owner"), 80),
+      status: "pending",
+      createdAt: FieldValue.serverTimestamp(),
+    };
     try { await ref.create(property); }
     catch (error) {
       if (Number(error?.code) !== 6 && error?.code !== "already-exists") throw error;

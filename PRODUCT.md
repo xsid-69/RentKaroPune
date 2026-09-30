@@ -1,43 +1,59 @@
 # RentkaroPune
 
-RentkaroPune is a Pune-first rental listing website for verified flats, villas, and bungalows. Visitors can browse without an account, contact the team on WhatsApp, or request a callback.
+RentkaroPune is a Pune-first rental listing marketplace for verified flats, villas, bungalows, and commercial properties. It operates as **India's Transparent Property Marketplace**: owners list free with zero brokerage, brokers list with upfront fee disclosure, and RentKaro monetizes low-friction access and verified badges rather than transaction brokerage.
 
 ## Audience
-- Renters browsing approved Pune homes
-- Owners and consultants submitting properties
-- Admins verifying inventory and responding to enquiries
+- Renters browsing approved Pune homes (filtered by Direct Owner or Broker Listed)
+- Property owners listing rental units directly with 0% brokerage
+- Real estate brokers and consultants listing inventory with disclosed terms
+- Commercial landlords managing multi-property portfolios and lead packages
+- Admins verifying inventory, badges, and responding to enquiries
 
-## Core flows
-1. Visitors browse and filter approved listings without signing in.
-2. A visitor uses standard WhatsApp buttons across the site. On a selected property’s mobile footer, the visitor can instead drag the accessible swipe control to open WhatsApp at +91 70453 08514; a direct-link fallback remains available in the property enquiry panel.
-3. Callback requests include preferred time and optional language preference: English, Hindi, Marathi, or no preference.
-4. The global automated support guide answers common rental questions and hands visitors off to WhatsApp, property search, or the callback popup.
-5. Admins view unique visitor totals and callback requests, then mark requests as new, contacted, or closed.
-6. Owners submit listings for verification.
-7. Admins approve properties and consultant applications.
+## Business Model: "Pay for Access, Not Brokerage"
 
-## Access model
-- Login is optional for public browsing and enquiries.
-- Signed-in members can manage a profile and request consultant access.
-- Consultants and owners submit verified properties from their profile.
-- The dashboard is admin-only and focuses on analytics, callback-request handling, and approvals (properties and consultant access).
-- Admin APIs enforce server-side role checks.
+### 1. Free 7-Day Property Listing
+- Both **Owners** and **Brokers** can list properties on the platform.
+- Basic listing submission is **₹0 (100% Free)**.
+- Free ad runs active in search results for **7 days**.
+- After 7 days, the poster can extend the ad for 30 days (₹149) or upgrade to an Owner Monthly Plan.
 
-## Admin dashboard
-Admins see visitor analytics, all stored callback requests, the live property approval queue, and consultant access requests. Consultant and property submission workflows live on the profile, not the dashboard.
+### 2. Two Distinct Property Types for Customers
+- **🟢 Direct Owner Listed (Zero Brokerage)**:
+  - 100% Zero Brokerage guarantee for tenants.
+  - Direct connection with the verified property owner.
+  - Low-friction contact unlock (₹49) reveals direct phone, WhatsApp link, and full address.
+- **🟠 Broker Listed (Brokerage Disclosed Upfront)**:
+  - Clearly marked with an amber "Broker Listed" tag.
+  - Prominent brokerage warning banner and interactive advisory modal.
+  - Informs renters about expected broker commission (15–30 days rent) prior to unlocking (₹99).
+  - Brokerage is negotiated directly with the broker; RentKaro Pune never charges transaction commissions.
 
-## Callback lifecycle
-- Public visitors submit a callback request (name and Indian mobile required; message, email, preferred time, and preferred language optional).
-- Submissions are stored server-side in Firestore. A repeat submission from the same number for the same property updates the existing open request instead of creating a duplicate.
-- Each request is either New or Contacted. Admins mark a request Contacted with a single action; the row moves to the Contacted view. This is one-way and enforced in a server transaction, so a request can never be reopened.
-- The admin phone field is one-tap copyable, and new requests appear within seconds via background polling.
+### 3. Three-Tier Search Ranking
+1. **⭐ Verified / Premium Listings (TOP)**:
+   - Verified Owner/Broker badge with shield icon.
+   - Guaranteed top search placement across Pune localities.
+   - 3x higher view and lead conversion.
+2. **Active Paid / Extended Listings**:
+   - Properties renewed after the 7-day free trial.
+   - Standard active ranking.
+3. **Free Listings (BELOW)**:
+   - Free 7-day trial listings.
+   - Lower visibility below verified and active paid listings.
 
-## Security and privacy
-- Strict security headers site-wide: Content-Security-Policy, HSTS (production), X-Content-Type-Options, X-Frame-Options, Referrer-Policy, Permissions-Policy, COOP, CORP, and Origin-Agent-Cluster.
-- Authenticated and personal-data API responses are sent with no-store cache directives.
-- Callback and visitor collections are server-only in Firestore rules; no client can read or write personal enquiry data. Properties are publicly readable only when approved.
-- Public write endpoints enforce same-origin checks, JSON content-type, a honeypot field, input validation and normalization, and per-IP rate limiting.
-- Unique-visitor identity uses a signed, HttpOnly, one-year cookie hashed into a deterministic document id, so analytics never store raw identifiers.
+### 4. Low-Friction Contact Unlock
+- Replaces heavy, prohibitive brokerage with affordable, transparent access:
+  - **Owner Listing Unlock**: ₹49 (One-time, direct owner access).
+  - **Broker Listing Unlock**: ₹99 (One-time, broker coordination + advisory notice).
+- Transparent unlock modal with instant UPI and card simulation, immediately revealing direct mobile number, society name, and WhatsApp button.
+- Unlocked state persisted per user/device and logged server-side.
 
-## Visitor counting
-A signed, HttpOnly browser cookie identifies a visitor for one year. A Firestore document with a deterministic hashed ID ensures repeat page visits from the same browser are counted once. A different browser, device, or cleared cookie is treated as a new visitor.
+### 5. Commercial & Landlord Monthly Lead Plans
+- For regular landlords, property developers, and commercial shop owners:
+  - **Starter Owner (₹499/mo)**: 15 Direct Tenant Leads, 2 Featured Verified Badges, up to 3 active listings.
+  - **Pro Landlord & Commercial (₹999/mo)**: 40 Direct Tenant Leads, 5 Featured Verified Badges, up to 10 active listings, priority placement.
+  - **Commercial & Enterprise (₹1,999/mo)**: Unlimited Leads, Verified Badges on all listings (Rank 1 Priority), dedicated account manager.
+
+## Security and Privacy
+- Strict Content Security Policy, rate-limiting on unlock and plan endpoints.
+- Server-side Admin SDK isolation for unlocked lead logs and plan subscriptions.
+- Masked phone numbers and blurred addresses until securely unlocked by authenticated/verified users.

@@ -6,7 +6,8 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import Icon from "./Icon";
 import SelectField from "./SelectField";
 import { firebaseConfigured } from "@/lib/firebase";
-import { subscribeApprovedProperties } from "@/lib/properties";
+import { subscribeApprovedProperties, toMarketplaceProperty } from "@/lib/properties";
+import { seedProperties } from "@/lib/seed";
 
 const money = (value) => new Intl.NumberFormat("en-IN", { maximumFractionDigits: 0 }).format(Number(value || 0));
 const MIN_RENT = 10000;
@@ -15,6 +16,7 @@ const BHK = [["", "Any BHK"], ["1BHK", "1 BHK"], ["2BHK", "2 BHK"], ["3BHK", "3 
 const COLLECTION_OPTIONS = [{ value: "", label: "All homes" }, { value: "airbnb", label: "Airbnb-style" }, { value: "family", label: "Family homes" }];
 const FURNISHING_OPTIONS = [{ value: "", label: "Any furnishing" }, { value: "furnished", label: "Any furnished" }, { value: "fully", label: "Fully furnished" }, { value: "semi", label: "Semi furnished" }, { value: "unfurnished", label: "Unfurnished" }];
 const TYPE_OPTIONS = [{ value: "", label: "Any type" }, { value: "Flat", label: "Flat" }, { value: "Villa", label: "Villa" }, { value: "Bungalow", label: "Bungalow" }];
+const LISTED_BY_OPTIONS = [{ value: "", label: "All listings" }, { value: "owner", label: "Direct Owner (0% Brokerage)" }, { value: "broker", label: "Listed by Broker" }];
 const SORT_OPTIONS = [{ value: "newest", label: "Newest" }, { value: "rent-asc", label: "Rent: low to high" }, { value: "rent-desc", label: "Rent: high to low" }];
 const fieldClass = "min-h-11 w-full rounded-lg border border-[#d5d5d5] bg-white px-3 text-sm font-semibold text-[#222] outline-none focus:border-[#ff5a1f] focus:ring-2 focus:ring-[#ff5a1f]/15";
 function PriceSlider({ value, setParam }) {
@@ -26,7 +28,9 @@ function PriceSlider({ value, setParam }) {
   return <div><div className="mb-3 flex items-end justify-between gap-3"><span className="text-xs font-semibold text-[#666]">₹{money(MIN_RENT)}</span><strong className="text-sm tabular-nums">{draft >= MAX_RENT ? `₹${money(MAX_RENT)}+` : `₹${money(draft)}`}</strong></div><input className="price-slider" type="range" min={MIN_RENT} max={MAX_RENT} step="5000" value={draft} style={{ "--range-progress": `${progress}%` }} aria-label="Maximum monthly rent" aria-valuetext={draft >= MAX_RENT ? `No upper limit above ${money(MAX_RENT)} rupees` : `${money(draft)} rupees maximum`} onChange={(event) => setDraft(Number(event.target.value))} onPointerUp={apply} onKeyUp={apply} onBlur={apply}/><div className="mt-2 flex items-center justify-between gap-3"><span className="text-[11px] text-[#777]">Drag to set maximum</span>{value && <button type="button" onClick={() => { setDraft(MAX_RENT); setParam("maxRent", ""); }} className="min-h-9 text-xs font-extrabold text-[#d9470e] underline underline-offset-4">No maximum</button>}</div></div>;
 }
 function FilterPanel({ values, setParam, reset }) {
-  return <div className="grid gap-6"><div><label className="mb-2 block text-sm font-extrabold">Location</label><input className={fieldClass} value={values.location} onChange={(event) => setParam("location", event.target.value)} placeholder="Pune locality"/></div>
+  return <div className="grid gap-6">
+    <div><span className="mb-2 block text-sm font-extrabold">Listed by</span><SelectField ariaLabel="Listed by" value={values.listedBy} onChange={(next) => setParam("listedBy", next)} options={LISTED_BY_OPTIONS} buttonClassName={fieldClass}/></div>
+    <div><label className="mb-2 block text-sm font-extrabold">Location</label><input className={fieldClass} value={values.location} onChange={(event) => setParam("location", event.target.value)} placeholder="Pune locality"/></div>
     <div><h3 className="mb-2 text-sm font-extrabold">Monthly rent</h3><PriceSlider value={values.maxRent} setParam={setParam}/></div>
     <fieldset><legend className="mb-2 text-sm font-extrabold">Bedrooms</legend><div className="grid gap-1">{BHK.map(([value,label]) => <label className="flex min-h-9 cursor-pointer items-center gap-2 text-sm" key={label}><input type="radio" name="bhk" checked={values.bhk === value} onChange={() => setParam("bhk", value)} className="size-4 accent-[#ff5a1f]"/>{label}</label>)}</div></fieldset>
     <div><span className="mb-2 block text-sm font-extrabold">Collection</span><SelectField ariaLabel="Collection" value={values.collection} onChange={(next) => setParam("collection", next)} options={COLLECTION_OPTIONS} buttonClassName={fieldClass}/></div>
@@ -37,12 +41,172 @@ function FilterPanel({ values, setParam, reset }) {
 export default function ListingGrid() {
   const searchParams = useSearchParams(); const router = useRouter(); const pathname = usePathname();
   const [properties, setProperties] = useState([]); const [loading, setLoading] = useState(true); const [error, setError] = useState(""); const [retry, setRetry] = useState(0);
-  useEffect(() => { if (!firebaseConfigured) { setError("Firebase is not configured for this deployment."); setLoading(false); return; } setLoading(true); setError(""); let unsubscribe; try { unsubscribe = subscribeApprovedProperties((items) => { setProperties(items); setLoading(false); }, () => { setError("Approved properties could not be loaded. Check your connection and retry."); setLoading(false); }); } catch (subscriptionError) { setError(subscriptionError?.message || "Properties could not be loaded."); setLoading(false); } return () => unsubscribe?.(); }, [retry]);
-  const values = { location: searchParams.get("location") || "", maxRent: searchParams.get("maxRent") || "", bhk: searchParams.get("bhk") || "", collection: searchParams.get("collection") || "", furnishing: searchParams.get("furnishing") || "", type: searchParams.get("type") || "", sort: searchParams.get("sort") || "newest" };
+  useEffect(() => {
+    if (!firebaseConfigured) {
+      setProperties(seedProperties.map(toMarketplaceProperty));
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    setError("");
+    let unsubscribe;
+    try {
+      unsubscribe = subscribeApprovedProperties(
+        (items) => {
+          if (Array.isArray(items) && items.length > 0) {
+            setProperties(items);
+          } else {
+            setProperties(seedProperties.map(toMarketplaceProperty));
+          }
+          setLoading(false);
+        },
+        () => {
+          setProperties(seedProperties.map(toMarketplaceProperty));
+          setLoading(false);
+        }
+      );
+    } catch {
+      setProperties(seedProperties.map(toMarketplaceProperty));
+      setLoading(false);
+    }
+    return () => unsubscribe?.();
+  }, [retry]);
+  const values = { listedBy: searchParams.get("listedBy") || "", location: searchParams.get("location") || "", maxRent: searchParams.get("maxRent") || "", bhk: searchParams.get("bhk") || "", collection: searchParams.get("collection") || "", furnishing: searchParams.get("furnishing") || "", type: searchParams.get("type") || "", sort: searchParams.get("sort") || "newest" };
   const setParam = (name, value) => { const next = new URLSearchParams(searchParams.toString()); if (value) next.set(name, value); else next.delete(name); next.set("minRent", "10000"); router.replace(`${pathname}?${next.toString()}`, { scroll: false }); };
   const reset = () => router.replace(`${pathname}?minRent=10000&sort=newest`, { scroll: false });
-  const visible = useMemo(() => { const query = values.location.trim().toLowerCase(); const minRent = Math.max(10000, Number(searchParams.get("minRent")) || 10000); const maxRent = Number(values.maxRent) || Infinity; const items = properties.filter((item) => { const rent = Number(item.rent); const searchable = [item.title,item.address,item.location,item.locality].join(" ").toLowerCase(); const furnishing = String(item.furnishing || "").toLowerCase(); const type = item.propertyType || item.type || "Flat"; const matchesFurnishing = !values.furnishing || values.furnishing === "furnished" && furnishing.includes("furnished") && !furnishing.startsWith("unfurnished") || values.furnishing === "fully" && furnishing.includes("fully") || values.furnishing === "semi" && furnishing.includes("semi") || values.furnishing === "unfurnished" && furnishing.startsWith("unfurnished"); const matchesCollection = !values.collection || values.collection === "airbnb" && (/fully/i.test(furnishing) || ["Villa","Bungalow"].includes(type)) || values.collection === "family" && (/family/i.test(item.tenantPreference || "") || /^[234]/.test(String(item.bhk))); return rent >= minRent && rent <= maxRent && (!query || searchable.includes(query)) && (!values.bhk || item.bhk === values.bhk) && (!values.type || type === values.type) && matchesFurnishing && matchesCollection; }); return items.sort((a,b) => values.sort === "rent-asc" ? a.rent-b.rent : values.sort === "rent-desc" ? b.rent-a.rent : String(b.createdAt || "").localeCompare(String(a.createdAt || ""))); }, [properties, searchParams, values.location, values.maxRent, values.bhk, values.collection, values.furnishing, values.type, values.sort]);
+  const visible = useMemo(() => {
+    const query = values.location.trim().toLowerCase();
+    const minRent = Math.max(10000, Number(searchParams.get("minRent")) || 10000);
+    const maxRent = Number(values.maxRent) || Infinity;
+    const items = properties.filter((item) => {
+      const rent = Number(item.rent);
+      const searchable = [item.title,item.address,item.location,item.locality].join(" ").toLowerCase();
+      const furnishing = String(item.furnishing || "").toLowerCase();
+      const type = item.propertyType || item.type || "Flat";
+      const isOwner = item.isOwner ?? (item.listedBy === "owner" || !item.contact?.agent?.toLowerCase().includes("broker"));
+      const matchesListedBy = !values.listedBy || (values.listedBy === "owner" ? isOwner : !isOwner);
+      const matchesFurnishing = !values.furnishing || values.furnishing === "furnished" && furnishing.includes("furnished") && !furnishing.startsWith("unfurnished") || values.furnishing === "fully" && furnishing.includes("fully") || values.furnishing === "semi" && furnishing.includes("semi") || values.furnishing === "unfurnished" && furnishing.startsWith("unfurnished");
+      const matchesCollection = !values.collection || values.collection === "airbnb" && (/fully/i.test(furnishing) || ["Villa","Bungalow"].includes(type)) || values.collection === "family" && (/family/i.test(item.tenantPreference || "") || /^[234]/.test(String(item.bhk)));
+      return rent >= minRent && rent <= maxRent && matchesListedBy && (!query || searchable.includes(query)) && (!values.bhk || item.bhk === values.bhk) && (!values.type || type === values.type) && matchesFurnishing && matchesCollection;
+    });
+
+    // Requirement: Verified properties rank on TOP, regular free properties below
+    return items.sort((a,b) => {
+      const aVerified = Boolean(a.verifiedBadge);
+      const bVerified = Boolean(b.verifiedBadge);
+      if (aVerified !== bVerified) {
+        return bVerified ? 1 : -1;
+      }
+      if (values.sort === "rent-asc") return a.rent - b.rent;
+      if (values.sort === "rent-desc") return b.rent - a.rent;
+      return String(b.createdAt || "").localeCompare(String(a.createdAt || ""));
+    });
+  }, [properties, searchParams, values.listedBy, values.location, values.maxRent, values.bhk, values.collection, values.furnishing, values.type, values.sort]);
+
   if (loading) return <div className="grid gap-7 lg:grid-cols-[260px_minmax(0,1fr)]"><div className="hidden h-[520px] animate-pulse rounded-2xl bg-[#e8e8e8] lg:block"/><div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">{[0,1,2,3,4,5].map((item) => <div key={item} className="aspect-[4/5] animate-pulse rounded-2xl bg-[#e8e8e8]"/>)}</div></div>;
   if (error) return <section className="rounded-2xl border border-red-200 bg-red-50 px-5 py-12 text-center" role="alert"><Icon name="info" className="mx-auto text-red-700"/><h2 className="mt-3 text-xl font-extrabold">We could not load the live feed</h2><p className="mt-2 text-red-800">{error}</p><button onClick={() => setRetry((value) => value + 1)} className="mt-5 min-h-11 rounded-lg bg-[#222] px-5 font-bold text-white">Retry</button></section>;
-  return <><header className="mb-7 border-b border-[#ddd] pb-6"><h1 className="text-[clamp(2rem,4vw,3.5rem)] font-black leading-none tracking-[-.04em]">Pune rental search</h1><p className="mb-0 mt-2 text-[#666]">{visible.length} approved {visible.length === 1 ? "home" : "homes"} from ₹10,000</p></header><div className="grid items-start gap-8 lg:grid-cols-[260px_minmax(0,1fr)]"><aside className="sticky top-24 hidden rounded-2xl border border-[#ddd] bg-white p-5 lg:block" aria-label="Property filters"><h2 className="mb-5 text-xl font-black">Filters</h2><FilterPanel values={values} setParam={setParam} reset={reset}/></aside><section className="min-w-0"><details className="mb-5 rounded-xl border border-[#ddd] bg-white p-4 lg:hidden"><summary className="cursor-pointer font-extrabold">Filters and price</summary><div className="mt-5"><FilterPanel values={values} setParam={setParam} reset={reset}/></div></details><div className="mb-5 flex flex-wrap items-center justify-between gap-3"><strong>{visible.length} results</strong><div className="flex items-center gap-2 text-sm font-bold">Sort by<SelectField ariaLabel="Sort results" value={values.sort} onChange={(next) => setParam("sort", next)} options={SORT_OPTIONS} align="right" className="w-[180px]" buttonClassName="min-h-11 rounded-lg border border-[#ccc] bg-white px-3 font-semibold text-[#222]"/></div></div>{visible.length ? <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3" aria-live="polite">{visible.map((property) => <article key={property.id} className="group overflow-hidden rounded-2xl border border-[#ddd] bg-white transition hover:border-[#aaa] hover:shadow-[0_14px_38px_rgb(0_0_0/9%)]"><Link href={`/properties/${property.id}`} className="block text-inherit"><div className="relative aspect-[4/3] overflow-hidden bg-[#eee]"><img src={property.images[0]} alt={`${property.title} in ${property.location}`} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.025]"/><span className="absolute left-3 top-3 rounded-full bg-white/95 px-2.5 py-1 text-xs font-extrabold">Verified</span></div><div className="p-4"><h2 className="line-clamp-2 min-h-12 text-base font-extrabold leading-6">{property.title}</h2><p className="mt-1 text-sm text-[#666]">{property.location || property.locality} · {property.bhk}</p><p className="mt-3 text-xl font-black tabular-nums">₹{money(property.rent)}<span className="text-sm font-medium text-[#666]"> / month</span></p><p className="mt-1 text-xs text-[#666]">Deposit ₹{money(property.deposit)} · {property.furnishing || "Furnishing not specified"}</p><span className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-[#ff5a1f] px-4 text-sm font-extrabold text-white">View property</span></div></Link></article>)}</div> : <div className="rounded-2xl border border-dashed border-[#bbb] bg-white p-12 text-center"><h2 className="text-xl font-black">No properties match these filters</h2><p className="mt-2 text-[#666]">Clear a filter or increase your maximum rent.</p><button onClick={reset} className="mt-5 min-h-11 rounded-lg bg-[#222] px-5 font-bold text-white">Reset filters</button></div>}</section></div></>;
+  return <><header className="mb-7 border-b border-[#ddd] pb-6">
+    <div className="flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <h1 className="text-[clamp(2rem,4vw,3.5rem)] font-black leading-none tracking-[-.04em]">Pune rental search</h1>
+        <p className="mb-0 mt-2 text-[#666]">{visible.length} approved {visible.length === 1 ? "home" : "homes"} · Verified rank at top</p>
+      </div>
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          onClick={() => setParam("listedBy", "")}
+          className={`min-h-9 rounded-full px-3.5 text-xs font-extrabold transition-all ${!values.listedBy ? "bg-[#222] text-white" : "border border-stone-300 bg-white text-stone-700"}`}
+        >
+          All
+        </button>
+        <button
+          type="button"
+          onClick={() => setParam("listedBy", "owner")}
+          className={`min-h-9 rounded-full px-3.5 text-xs font-extrabold transition-all ${values.listedBy === "owner" ? "bg-emerald-700 text-white" : "border border-stone-300 bg-white text-emerald-800"}`}
+        >
+          Direct Owner (0% Brokerage)
+        </button>
+        <button
+          type="button"
+          onClick={() => setParam("listedBy", "broker")}
+          className={`min-h-9 rounded-full px-3.5 text-xs font-extrabold transition-all ${values.listedBy === "broker" ? "bg-amber-700 text-white" : "border border-stone-300 bg-white text-amber-800"}`}
+        >
+          Broker Listed
+        </button>
+      </div>
+    </div>
+  </header>
+  <div className="grid items-start gap-8 lg:grid-cols-[260px_minmax(0,1fr)]">
+    <aside className="sticky top-24 hidden rounded-2xl border border-[#ddd] bg-white p-5 lg:block" aria-label="Property filters">
+      <h2 className="mb-5 text-xl font-black">Filters</h2>
+      <FilterPanel values={values} setParam={setParam} reset={reset}/>
+    </aside>
+    <section className="min-w-0">
+      <details className="mb-5 rounded-xl border border-[#ddd] bg-white p-4 lg:hidden">
+        <summary className="cursor-pointer font-extrabold">Filters and price</summary>
+        <div className="mt-5"><FilterPanel values={values} setParam={setParam} reset={reset}/></div>
+      </details>
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+        <strong>{visible.length} results</strong>
+        <div className="flex items-center gap-2 text-sm font-bold">
+          Sort by
+          <SelectField ariaLabel="Sort results" value={values.sort} onChange={(next) => setParam("sort", next)} options={SORT_OPTIONS} align="right" className="w-[180px]" buttonClassName="min-h-11 rounded-lg border border-[#ccc] bg-white px-3 font-semibold text-[#222]"/>
+        </div>
+      </div>
+      {visible.length ? <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3" aria-live="polite">{visible.map((property) => {
+        const isOwner = property.isOwner ?? (property.listedBy === "owner" || !property.contact?.agent?.toLowerCase().includes("broker"));
+        return (
+          <article key={property.id} className="group overflow-hidden rounded-2xl border border-[#ddd] bg-white transition hover:border-[#aaa] hover:shadow-[0_14px_38px_rgb(0_0_0/9%)]">
+            <Link href={`/properties/${property.id}`} className="block text-inherit">
+              <div className="relative aspect-[4/3] overflow-hidden bg-[#eee]">
+                <img src={property.images[0]} alt={`${property.title} in ${property.location || property.locality}`} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.025]"/>
+                <div className="absolute left-3 top-3 flex items-center gap-1.5">
+                  {property.verifiedBadge ? (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-white/95 px-2.5 py-1 text-xs font-black text-stone-900 shadow-sm">
+                      <span className="size-1.5 rounded-full bg-emerald-500"/> Verified
+                    </span>
+                  ) : (
+                    <span className="rounded-full bg-white/95 px-2 py-0.5 text-[11px] font-bold text-stone-600 shadow-sm">
+                      Free Ad
+                    </span>
+                  )}
+                </div>
+                <span className={`absolute right-3 top-3 rounded-full px-2.5 py-1 text-[11px] font-black shadow-sm ${isOwner ? "bg-emerald-600 text-white" : "bg-amber-600 text-white"}`}>
+                  {isOwner ? "0% Brokerage" : "Broker Listed"}
+                </span>
+              </div>
+              <div className="p-4">
+                <div className="mb-1.5">
+                  {isOwner ? (
+                    <span className="inline-flex items-center gap-1 rounded-md bg-emerald-50 px-2 py-0.5 text-[11px] font-extrabold text-emerald-800">
+                      <Icon name="shield" size={12}/> Direct Owner · Zero Brokerage
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 rounded-md bg-amber-50 px-2 py-0.5 text-[11px] font-extrabold text-amber-800">
+                      <Icon name="info" size={12}/> Broker Listing · Brokerage Charges
+                    </span>
+                  )}
+                </div>
+                <p className="mt-1 text-sm text-[#666]">{property.location || property.locality} · {property.bhk}</p>
+                {isOwner && (property.owner || property.contactName) && (
+                  <p className="mt-1.5 flex items-center gap-1.5 text-xs font-bold text-emerald-800">
+                    <span className="size-1.5 rounded-full bg-emerald-600" />
+                    <span>Owner: {property.owner || property.contactName}</span>
+                  </p>
+                )}
+                {!isOwner && (property.owner || property.contactName) && (
+                  <p className="mt-1.5 flex items-center gap-1.5 text-xs font-semibold text-stone-500">
+                    <span>Listed by: {property.owner || property.contactName}</span>
+                  </p>
+                )}
+                <p className="mt-3 text-xl font-black tabular-nums">₹{money(property.rent)}<span className="text-sm font-medium text-[#666]"> / month</span></p>
+                <p className="mt-1 text-xs text-[#666]">Deposit ₹{money(property.deposit)} · {property.furnishing || "Furnishing not specified"}</p>
+                <span className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-[#ff5a1f] px-4 text-sm font-extrabold text-white">View property</span>
+              </div>
+            </Link>
+          </article>
+        );
+      })}</div> : <div className="rounded-2xl border border-dashed border-[#bbb] bg-white p-12 text-center"><h2 className="text-xl font-black">No properties match these filters</h2><p className="mt-2 text-[#666]">Clear a filter or increase your maximum rent.</p><button onClick={reset} className="mt-5 min-h-11 rounded-lg bg-[#222] px-5 font-bold text-white">Reset filters</button></div>}
+    </section>
+  </div></>;
 }

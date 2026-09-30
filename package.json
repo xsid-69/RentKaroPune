@@ -9,6 +9,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "test": "node --conditions=react-server --test __tests__/*.test.mjs",
     "seed": "node scripts/seedProperties.mjs"
   },
   "dependencies": {
@@ -19,10 +20,12 @@
     "lenis": "1.3.25",
     "next": "16.2.10",
     "react": "19.2.7",
-    "react-dom": "19.2.7"
+    "react-dom": "19.2.7",
+    "server-only": "^0.0.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "4.3.3",
+    "jest": "^30.5.2",
     "tailwindcss": "4.3.3"
   },
   "overrides": {

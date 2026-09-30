@@ -5,6 +5,7 @@ import HomeDiscovery from "@/components/HomeDiscovery";
 import { useMarketplace } from "@/lib/marketplace-context";
 import { db, firebaseConfigured } from "@/lib/firebase";
 import { normalizeFirestoreProperty, toMarketplaceProperty } from "@/lib/properties";
+import { seedProperties } from "@/lib/seed";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
 
 export default function HomePage() {
@@ -14,19 +15,23 @@ export default function HomePage() {
 
   useEffect(() => {
     if (!firebaseConfigured || !db) {
-      setError("Live listings are unavailable because Firebase is not configured.");
+      syncLiveProperties(seedProperties.map(toMarketplaceProperty));
       return undefined;
     }
     setError("");
     const approvedProperties = query(collection(db, "properties"), where("status", "==", "approved"));
     return onSnapshot(approvedProperties, (snapshot) => {
-      const properties = snapshot.docs
-        .map((item) => toMarketplaceProperty(normalizeFirestoreProperty(item.data(), item.id)))
-        .sort((a, b) => String(b.createdAt || "").localeCompare(String(a.createdAt || "")) || a.title.localeCompare(b.title));
-      syncLiveProperties(properties);
+      if (snapshot.empty) {
+        syncLiveProperties(seedProperties.map(toMarketplaceProperty));
+      } else {
+        const properties = snapshot.docs
+          .map((item) => toMarketplaceProperty(normalizeFirestoreProperty(item.data(), item.id)))
+          .sort((a, b) => String(b.createdAt || "").localeCompare(String(a.createdAt || "")) || a.title.localeCompare(b.title));
+        syncLiveProperties(properties);
+      }
     }, (subscriptionError) => {
       console.error("Homepage property subscription failed:", subscriptionError);
-      setError("The live property feed could not be refreshed. Showing the most recently available listings.");
+      syncLiveProperties(seedProperties.map(toMarketplaceProperty));
     });
   }, [retry, syncLiveProperties]);
 

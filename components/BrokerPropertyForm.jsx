@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Icon from "./Icon";
 import ImageUploader from "./ImageUploader";
@@ -17,16 +17,23 @@ const AMENITIES = ["Parking", "Lift", "Gym", "Power Backup", "Security", "CCTV",
 const EMPTY_FORM = {
   title: "", bhk: "2BHK", propertyType: "Flat", location: "Viman Nagar, Pune",
   address: "", rent: "", deposit: "", amenities: [],
+  listedBy: "owner", brokerage: "0% (Zero Brokerage)", verifiedBadge: false,
+  contactPhone: "", contactName: "",
 };
 const field = "grid gap-2";
 const label = "text-sm font-bold text-[#161616]";
 const input = "min-h-12 w-full rounded-xl border border-[#D9D9D9] bg-white px-4 text-base text-[#0A0A0A] outline-none transition-[border-color,box-shadow] focus:border-[#FF5B00] focus:ring-4 focus:ring-[#FF5B00]/10 disabled:bg-[#F4F4F4]";
 
-export default function BrokerPropertyForm({ user }) {
+export default function BrokerPropertyForm({ user, activePlan }) {
   const router = useRouter();
   const errorRef = useRef(null);
   const [step, setStep] = useState(0);
-  const [form, setForm] = useState(EMPTY_FORM);
+  const [form, setForm] = useState({
+    ...EMPTY_FORM,
+    contactName: user?.name || "",
+    contactPhone: user?.phone || "",
+    verifiedBadge: Boolean(activePlan?.badge || activePlan?.id === "verified_badge" || activePlan?.id === "pro_landlord" || activePlan?.id === "enterprise_developer"),
+  });
   const [files, setFiles] = useState([]);
   const [pendingUpload, setPendingUpload] = useState(null);
   const [error, setError] = useState("");
@@ -34,6 +41,12 @@ export default function BrokerPropertyForm({ user }) {
   const [progress, setProgress] = useState(0);
   const [submitStage, setSubmitStage] = useState("Preparing secure upload");
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (activePlan?.badge || activePlan?.id === "verified_badge" || activePlan?.id === "pro_landlord" || activePlan?.id === "enterprise_developer") {
+      setForm((c) => ({ ...c, verifiedBadge: true }));
+    }
+  }, [activePlan]);
 
   const update = (event) => {
     const { name, value } = event.target;
@@ -129,28 +142,108 @@ export default function BrokerPropertyForm({ user }) {
       <form className="p-4 sm:p-7" onSubmit={submit} noValidate>
         {error && <p ref={errorRef} tabIndex="-1" role="alert" className="mb-5 flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold leading-5 text-red-800"><Icon name="info" size={18} className="mt-0.5 shrink-0"/>{error}</p>}
 
-        {step === 0 && <fieldset className="grid gap-5 border-0 p-0"><legend className="mb-1 text-xl font-extrabold tracking-[-0.025em] text-[#0A0A0A]">Basic info & location</legend>
+        {step === 0 && <fieldset className="grid gap-5 border-0 p-0">
+          <legend className="mb-1 text-xl font-extrabold tracking-[-0.025em] text-[#0A0A0A]">Basic info & listing type</legend>
+          
+          <div className="grid gap-2">
+            <span className={label}>I am listing this property as: <span className="text-[#FF5B00]">*</span></span>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <button
+                type="button"
+                onClick={() => setForm((c) => ({ ...c, listedBy: "owner", brokerage: "0% (Zero Brokerage)" }))}
+                className={`flex flex-col text-left p-4 rounded-xl border transition-all ${form.listedBy === "owner" ? "border-emerald-600 bg-emerald-50/60 ring-2 ring-emerald-500/20" : "border-[#D9D9D9] bg-white hover:border-stone-400"}`}
+              >
+                <span className="flex items-center gap-1.5 font-black text-sm text-emerald-800">
+                  <Icon name="shield" size={16}/> Direct Owner Listing
+                </span>
+                <span className="mt-1 text-xs text-stone-600">Zero brokerage for tenants. Direct verified owner badge.</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setForm((c) => ({ ...c, listedBy: "broker", brokerage: "Standard 1 Month Brokerage" }))}
+                className={`flex flex-col text-left p-4 rounded-xl border transition-all ${form.listedBy === "broker" ? "border-amber-600 bg-amber-50/60 ring-2 ring-amber-500/20" : "border-[#D9D9D9] bg-white hover:border-stone-400"}`}
+              >
+                <span className="flex items-center gap-1.5 font-black text-sm text-amber-900">
+                  <Icon name="info" size={16}/> Real Estate Broker
+                </span>
+                <span className="mt-1 text-xs text-stone-600">Disclosed brokerage fee. Broker warning shown to renters.</span>
+              </button>
+            </div>
+          </div>
+
+          {form.listedBy === "broker" && (
+            <label className={field}>
+              <span className={label}>Brokerage Terms / Expected Commission <span className="text-[#FF5B00]">*</span></span>
+              <input className={input} name="brokerage" value={form.brokerage} onChange={update} placeholder="e.g. Standard 1 Month Rent or 15 Days Rent" required/>
+              <small className="text-xs text-stone-500">This will be transparently disclosed to renters before they contact you.</small>
+            </label>
+          )}
+
           <label className={field}><span className={label}>Listing title <span className="text-[#FF5B00]">*</span></span><input className={input} name="title" value={form.title} onChange={update} placeholder="Luxury 2BHK Flat in Viman Nagar" autoComplete="off" required/></label>
           <div className="grid gap-5 sm:grid-cols-2">
             <label className={field}><span className={label}>Configuration</span><select className={input} name="bhk" value={form.bhk} onChange={update}>{["1BHK", "2BHK", "3BHK", "4BHK+"].map((item) => <option key={item}>{item}</option>)}</select></label>
             <label className={field}><span className={label}>Property type</span><select className={input} name="propertyType" value={form.propertyType} onChange={update}>{["Flat", "Villa", "Bungalow"].map((item) => <option key={item}>{item}</option>)}</select></label>
           </div>
           <label className={field}><span className={label}>Pune locality <span className="text-[#FF5B00]">*</span></span><select className={input} name="location" value={form.location} onChange={update}>{PUNE_LOCATIONS.map((item) => <option key={item} value={item}>{item}</option>)}</select></label>
-          <label className={field}><span className={label}>Full street address <span className="text-[#FF5B00]">*</span></span><textarea className={`${input} min-h-24 resize-y py-3`} name="address" value={form.address} onChange={update} placeholder="Building, street, landmark and PIN code" rows="3" required/><small className="text-sm leading-5 text-[#666]">The exact address is stored for verification and should only be shared with qualified renters.</small></label>
+          <label className={field}><span className={label}>Full street address <span className="text-[#FF5B00]">*</span></span><textarea className={`${input} min-h-24 resize-y py-3`} name="address" value={form.address} onChange={update} placeholder="Building, street, landmark and PIN code" rows="3" required/><small className="text-sm leading-5 text-[#666]">The exact address is stored for verification and unlocked only for verified leads.</small></label>
         </fieldset>}
 
-        {step === 1 && <fieldset className="grid gap-6 border-0 p-0"><legend className="mb-1 text-xl font-extrabold tracking-[-0.025em] text-[#0A0A0A]">Rent & amenities</legend>
+        {step === 1 && <fieldset className="grid gap-6 border-0 p-0"><legend className="mb-1 text-xl font-extrabold tracking-[-0.025em] text-[#0A0A0A]">Rent, amenities & pricing model</legend>
           <div className="grid gap-5 sm:grid-cols-2">
             <label className={field}><span className={label}>Monthly rent <span className="text-[#FF5B00]">*</span></span><div className="relative"><span className="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-[#666]">₹</span><input className={`${input} pl-9 tabular-nums`} name="rent" value={form.rent} onChange={update} type="number" min="1000" step="500" inputMode="numeric" placeholder="30000" required/></div></label>
             <label className={field}><span className={label}>Refundable deposit <span className="text-[#FF5B00]">*</span></span><div className="relative"><span className="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-[#666]">₹</span><input className={`${input} pl-9 tabular-nums`} name="deposit" value={form.deposit} onChange={update} type="number" min="0" step="1000" inputMode="numeric" placeholder="90000" required/></div></label>
           </div>
+
+          <div className="rounded-xl border border-stone-200 bg-stone-50 p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <span className="font-extrabold text-sm text-stone-900">Listing Fee: ₹0 (Free for 7 Days)</span>
+                <p className="m-0 mt-0.5 text-xs text-stone-500">Your ad runs live on RentKaro Pune for 7 days with direct tenant enquiries.</p>
+              </div>
+              <span className="rounded-md bg-emerald-100 px-2.5 py-1 text-xs font-black text-emerald-800">
+                100% Free
+              </span>
+            </div>
+            <label className="mt-3 flex items-center gap-2.5 cursor-pointer pt-3 border-t border-stone-200">
+              <input
+                type="checkbox"
+                checked={form.verifiedBadge}
+                onChange={(e) => setForm((c) => ({ ...c, verifiedBadge: e.target.checked }))}
+                className="size-4 accent-[#FF5B00]"
+              />
+              <span className="text-xs font-bold text-stone-800">
+                ⭐ Request Verified Badge & Top Rank Boost (+₹299 after approval)
+              </span>
+            </label>
+          </div>
+
           <fieldset className="border-0 p-0"><legend className={`${label} mb-3`}>Available amenities <span className="text-[#FF5B00]">*</span></legend><div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">{AMENITIES.map((amenity) => {
             const selected = form.amenities.includes(amenity);
             return <button key={amenity} type="button" aria-pressed={selected} onClick={() => toggleAmenity(amenity)} className={`min-h-12 rounded-xl border px-3 text-left text-sm font-bold transition-[border-color,background-color,color,transform] duration-200 active:scale-95 motion-reduce:transform-none ${selected ? "border-[#FF5B00] bg-[#FFF0E7] text-[#B63F00]" : "border-[#D9D9D9] bg-white text-[#444] hover:border-[#FF5B00]"}`}><span className="mr-2 inline-flex w-4 justify-center" aria-hidden="true">{selected ? <Icon name="check" size={15}/> : "+"}</span>{amenity}</button>;
           })}</div></fieldset>
         </fieldset>}
 
-        {step === 2 && <div className="grid gap-6"><ImageUploader files={files} onChange={changeFiles} progress={progress} uploading={submitting} statusLabel={submitStage} onError={setError}/><aside className="rounded-xl bg-[#F6F6F6] p-4"><h2 className="m-0 text-base font-bold text-[#161616]">Before you submit</h2><ul className="mb-0 mt-2 grid gap-1.5 pl-5 text-sm leading-5 text-[#555]"><li>Use recent, well-lit photos of the actual property.</li><li>The listing stays pending until an admin verifies it.</li><li>Rent and deposit must match the broker agreement.</li></ul></aside></div>}
+        {step === 2 && <div className="grid gap-6">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <label className={field}>
+              <span className={label}>Contact Person Name <span className="text-[#FF5B00]">*</span></span>
+              <input className={input} name="contactName" value={form.contactName} onChange={update} placeholder={form.listedBy === "owner" ? "Owner Full Name" : "Agent / Firm Name"} required/>
+            </label>
+            <label className={field}>
+              <span className={label}>Contact Mobile Number <span className="text-[#FF5B00]">*</span></span>
+              <input className={input} name="contactPhone" value={form.contactPhone} onChange={update} placeholder="9822014852" type="tel" maxLength={10} required/>
+            </label>
+          </div>
+          <ImageUploader files={files} onChange={changeFiles} progress={progress} uploading={submitting} statusLabel={submitStage} onError={setError}/>
+          <aside className="rounded-xl bg-[#F6F6F6] p-4">
+            <h2 className="m-0 text-base font-bold text-[#161616]">Before you submit</h2>
+            <ul className="mb-0 mt-2 grid gap-1.5 pl-5 text-sm leading-5 text-[#555]">
+              <li>Listing is free for the first 7 days. You can extend anytime.</li>
+              <li>{form.listedBy === "owner" ? "Your property will display the 0% Zero Brokerage badge." : "Your property will disclose standard broker fees with transparent notice."}</li>
+              <li>The listing stays pending until quick admin verification.</li>
+            </ul>
+          </aside>
+        </div>}
 
         <div className="mt-7 flex flex-col-reverse gap-3 min-[430px]:flex-row min-[430px]:justify-between">
           {step > 0 ? <button type="button" disabled={submitting} onClick={() => { setStep((current) => current - 1); setError(""); }} className="min-h-12 rounded-xl border border-[#CFCFCF] bg-white px-6 text-sm font-bold text-[#161616] transition-[border-color,transform] hover:border-[#161616] active:scale-95 disabled:opacity-45 motion-reduce:transform-none">Back</button> : <span/>}

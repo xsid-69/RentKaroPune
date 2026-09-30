@@ -23,6 +23,7 @@ export default function AppShell({ children }) {
 
   const mobileRoutes = [
     { href: "/", label: "Discover", subtitle: "Browse verified homes across Pune", route: "discover" },
+    { href: "/plans", label: "Plans & Pricing", subtitle: "Owner monthly plans & verified badges", route: "plans" },
     ...(isAdmin ? [{ href: "/dashboard", label: "Dashboard", subtitle: "Approvals, callbacks and visitor analytics", route: "dashboard" }] : []),
     ...(user ? [{ href: "/profile", label: "Profile", subtitle: "Account and property listing tools", route: "profile" }] : []),
     { href: "/broker/add-property", label: "List property", subtitle: "Upload a verified Pune rental", accent: true },
@@ -83,7 +84,14 @@ export default function AppShell({ children }) {
     <header className="sticky top-0 z-[var(--z-nav)] bg-transparent pb-2 pl-[calc(env(safe-area-inset-left)+0.5rem)] pr-[calc(env(safe-area-inset-right)+0.5rem)] pt-[calc(env(safe-area-inset-top)+0.5rem)] min-[861px]:border-b min-[861px]:border-[#E5E5E5] min-[861px]:bg-white min-[861px]:p-0 min-[861px]:pt-[env(safe-area-inset-top)]">
       <div className="site-container flex h-16 items-center justify-between rounded-2xl border border-[#E5E5E5] bg-white shadow-[0_8px_24px_rgba(10,10,10,0.08)] min-[861px]:h-[72px] min-[861px]:rounded-none min-[861px]:border-0 min-[861px]:shadow-none">
         <Link className="inline-flex items-center focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#FF5B00]" href="/" aria-label="RentKaro home" tabIndex={menuOpen ? -1 : undefined}><Logo size={36} className={`${logoColors} gap-2 [&_[data-logo-word]]:text-[22px]`} /></Link>
-        <nav className="hidden items-center gap-7 min-[861px]:flex" aria-label="Primary navigation" aria-hidden={menuOpen ? true : undefined}><Link className={`${desktopLink} ${isDiscover ? activeDesktop : inactiveDesktop}`} href="/" tabIndex={menuOpen ? -1 : undefined}>Discover</Link>{isAdmin && <Link className={`${desktopLink} ${isDashboard ? activeDesktop : inactiveDesktop}`} href="/dashboard" tabIndex={menuOpen ? -1 : undefined}>Dashboard</Link>}{user && <Link className={`${desktopLink} ${isProfile ? activeDesktop : inactiveDesktop}`} href="/profile" tabIndex={menuOpen ? -1 : undefined}>Profile</Link>}<Link className={`${desktopLink} border-transparent text-[#FF5B00] hover:border-[#FF5B00]`} href="/broker/add-property" tabIndex={menuOpen ? -1 : undefined}>List property</Link><AccountControl variant="desktop" tabIndex={menuOpen ? -1 : undefined} /></nav>
+        <nav className="hidden items-center gap-7 min-[861px]:flex" aria-label="Primary navigation" aria-hidden={menuOpen ? true : undefined}>
+          <Link className={`${desktopLink} ${isDiscover ? activeDesktop : inactiveDesktop}`} href="/" tabIndex={menuOpen ? -1 : undefined}>Discover</Link>
+          <Link className={`${desktopLink} ${path.startsWith("/plans") ? activeDesktop : inactiveDesktop}`} href="/plans" tabIndex={menuOpen ? -1 : undefined}>Plans & Pricing</Link>
+          {isAdmin && <Link className={`${desktopLink} ${isDashboard ? activeDesktop : inactiveDesktop}`} href="/dashboard" tabIndex={menuOpen ? -1 : undefined}>Dashboard</Link>}
+          {user && <Link className={`${desktopLink} ${isProfile ? activeDesktop : inactiveDesktop}`} href="/profile" tabIndex={menuOpen ? -1 : undefined}>Profile</Link>}
+          <Link className={`${desktopLink} border-transparent text-[#FF5B00] hover:border-[#FF5B00]`} href="/broker/add-property" tabIndex={menuOpen ? -1 : undefined}>List property</Link>
+          <AccountControl variant="desktop" tabIndex={menuOpen ? -1 : undefined} />
+        </nav>
         <button ref={menuButtonRef} className="relative flex size-11 items-center justify-center text-[#0A0A0A] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FF5B00] min-[861px]:hidden" type="button" aria-expanded={menuOpen} aria-controls="mobile-navigation" aria-label={menuOpen ? "Close menu" : "Open menu"} onClick={() => setMenuOpen((open) => !open)}>
           <span className={`absolute h-0.5 w-5 bg-current transition-[transform,opacity] duration-300 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${menuOpen ? "rotate-45" : "-translate-y-1"}`} />
           <span className={`absolute h-0.5 w-5 bg-current transition-[transform,opacity] duration-300 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${menuOpen ? "-rotate-45" : "translate-y-1"}`} />
